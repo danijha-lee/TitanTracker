@@ -45,6 +45,7 @@ namespace TitanTracker
             services.AddScoped<IBTRolesService, BTRolesService>();
             services.AddScoped<IBTCompanyInfoService, BTCompanyInfoService>();
             services.AddScoped<IBTProjectService, BTProjectService>();
+            services.AddScoped<BTTicketService, BTTicketService>();
 
             services.AddControllersWithViews();
         }

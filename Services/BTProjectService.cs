@@ -13,12 +13,12 @@ namespace TitanTracker.Services
     public class BTProjectService : IBTProjectService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IBTRolesService _roleService;
+        private readonly IBTRolesService _rolesService;
 
-        public BTProjectService(ApplicationDbContext context, IBTRolesService roleService)
+        public BTProjectService(ApplicationDbContext context, IBTRolesService rolesService)
         {
             _context = context;
-            _roleService = roleService;
+            _rolesService = rolesService;
         }
 
         public async Task AddNewProjectAsync(Project project)
@@ -126,6 +126,8 @@ namespace TitanTracker.Services
                 List<BTUser> admins = await GetProjectMembersByRoleAsync(projectId, Roles.Admin.ToString());
 
                 List<BTUser> members = developers.Concat(submitters).Concat(admins).ToList();
+
+                return members;
             }
             catch (Exception)
             {
@@ -191,25 +193,25 @@ namespace TitanTracker.Services
                 projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived == true)
                                                 .Include(p => p.Members)
                                                 .Include(p => p.Tickets)
-                                                .ThenInclude(t => t.Comments)
+                                                    .ThenInclude(ml => ml.Comments)
                                                 .Include(p => p.Tickets)
-                                                .ThenInclude(t => t.Attachments)
+                                                    .ThenInclude(t => t.Attachments)
                                                 .Include(p => p.Tickets)
-                                                .ThenInclude(t => t.History)
+                                                    .ThenInclude(t => t.History)
                                                 .Include(p => p.Tickets)
-                                                 .ThenInclude(t => t.Notifications)
-                                                 .Include(p => p.Tickets)
-                                                 .ThenInclude(t => t.DeveloperUser)
-                                                 .Include(p => p.Tickets)
-                                                 .ThenInclude(t => t.OwnerUser)
-                                                 .Include(p => p.Tickets)
-                                                 .ThenInclude(t => t.TicketStatus)
-                                                 .Include(p => p.Tickets)
-                                                 .ThenInclude(t => t.TicketPriority)
-                                                 .Include(p => p.Tickets)
-                                                 .ThenInclude(t => t.TicketType)
-                                                 .Include(p => p.ProjectPriority)
-                                                 .ToListAsync();
+                                                    .ThenInclude(t => t.Notifications)
+                                                .Include(p => p.Tickets)
+                                                    .ThenInclude(t => t.DeveloperUser)
+                                                .Include(p => p.Tickets)
+                                                    .ThenInclude(t => t.OwnerUser)
+                                                .Include(p => p.Tickets)
+                                                    .ThenInclude(t => t.TicketStatus)
+                                                .Include(p => p.Tickets)
+                                                    .ThenInclude(t => t.TicketPriority)
+                                                .Include(p => p.Tickets)
+                                                    .ThenInclude(t => t.TicketType)
+                                                .Include(p => p.ProjectPriority)
+                                                .ToListAsync();
                 return projects;
             }
             catch (Exception)
@@ -250,7 +252,7 @@ namespace TitanTracker.Services
                                           .FirstOrDefaultAsync(p => p.Id == projectId);
                 foreach (BTUser member in project.Members)
                 {
-                    if (await _roleService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
+                    if (await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
                         return member;
                 }
                 return null;
@@ -381,7 +383,7 @@ namespace TitanTracker.Services
                 {
                     foreach (BTUser member in project.Members)
                     {
-                        if (await _roleService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
+                        if (await _rolesService.IsUserInRoleAsync(member, Roles.ProjectManager.ToString()))
                         {
                             await RemoveUserFromProjectAsync(member.Id, projectId);
                         }
