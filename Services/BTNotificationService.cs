@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using TitanTracker.Data;
 using TitanTracker.Models;
 using TitanTracker.Services.Interfaces;
@@ -26,14 +27,40 @@ namespace TitanTracker.Services
             throw new NotImplementedException();
         }
 
-        public Task<List<Notification>> GetReceivedNotificationsAsync(string userId)
+        public async Task<List<Notification>> GetReceivedNotificationsAsync(string userId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Notification> notifications = await _context.Notifications
+                                                 .Include(n => n.Recipient)
+                                                 .Include(n => n.Sender)
+                                                 .Include(n => n.Ticket)
+                                                 .ThenInclude(t => t.Project)
+                                                .Where(n => n.RecipientId == userId).ToListAsync();
+                return notifications;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task<List<Notification>> GetSentNotificationsAsync(string userId)
+        public async Task<List<Notification>> GetSentNotificationsAsync(string userId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Notification> notifications = await _context.Notifications
+                                                 .Include(n => n.Recipient)
+                                                 .Include(n => n.Sender)
+                                                 .Include(n => n.Ticket)
+                                                 .ThenInclude(t => t.Project)
+                                                .Where(n => n.SenderId == userId).ToListAsync();
+                return notifications;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public Task<bool> SendEmailNotificationAsync(Notification notification, string emailSubject)

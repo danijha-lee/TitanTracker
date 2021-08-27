@@ -47,6 +47,8 @@ namespace TitanTracker
             services.AddScoped<IBTProjectService, BTProjectService>();
             services.AddScoped<BTTicketService, BTTicketService>();
 
+            services.AddScoped<IEmailSender>
+
             services.AddControllersWithViews();
         }
 
