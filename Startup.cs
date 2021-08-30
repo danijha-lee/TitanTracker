@@ -1,19 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TitanTracker.Services;
 using TitanTracker.Data;
 using TitanTracker.Models;
-using TitanTracker.Services;
+
+using TitanTracker.Services.Factories;
 using TitanTracker.Services.Interfaces;
 
 namespace TitanTracker
@@ -38,16 +41,22 @@ namespace TitanTracker
 
             services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultUI()
-            .AddDefaultTokenProviders();
+                .AddClaimsPrincipalFactory<BTUserClaimsPrincipalFactory>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders();
 
-            //Custom Services
+            // Custom Services
             services.AddScoped<IBTRolesService, BTRolesService>();
             services.AddScoped<IBTCompanyInfoService, BTCompanyInfoService>();
             services.AddScoped<IBTProjectService, BTProjectService>();
-            services.AddScoped<BTTicketService, BTTicketService>();
+            services.AddScoped<IBTTicketService, BTTicketService>();
+            services.AddScoped<IBTNotificationService, BTNotificationService>();
+            services.AddScoped<IBTInviteService, BTInviteService>();
+            services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
 
-            services.AddScoped<IEmailSender>
+            services.AddScoped<IEmailSender, BTEmailService>();
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            // End Custom Services
 
             services.AddControllersWithViews();
         }

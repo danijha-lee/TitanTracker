@@ -19,7 +19,7 @@ namespace TitanTracker.Models
         public DateTimeOffset JoinDate { get; set; }
 
         [DisplayName("Code")]
-        public int CompanyToken { get; set; }
+        public Guid CompanyToken { get; set; }
 
         [DisplayName("Company Id")]
         public int CompanyId { get; set; }

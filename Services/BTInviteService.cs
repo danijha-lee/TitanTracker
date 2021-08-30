@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.EntityFrameworkCore;
 using TitanTracker.Data;
 using TitanTracker.Models;
 using TitanTracker.Services.Interfaces;
@@ -13,16 +14,36 @@ namespace TitanTracker.Services
     public class BTInviteService : IBTInviteService
     {
         private readonly ApplicationDbContext _context;
-        private IEmailSender _emailSender;
-        private IBTProjectService _projectService;
+
+        public BTInviteService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         public async Task<bool> AcceptInviteAsync(Guid? token, string userId, int companyId)
         {
             try
             {
-                bool result = await _context.Invites.Where(i => i.CompanyId == companyId)
-                                                         .AnyAsync(i => i.CompanyToken == token && i.InviteeEmail == email);
-                return result;
+                Invite invite = await _context.Invites.FirstOrDefaultAsync(i => i.CompanyToken == token);
+
+                if (invite != null)
+                {
+                    try
+                    {
+                        invite.IsValid = false;
+                        invite.InviteeId = userId;
+                        await _context.SaveChangesAsync();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception)
             {
@@ -32,10 +53,17 @@ namespace TitanTracker.Services
 
         public async Task AddNewInviteAsync(Invite invite)
         {
+            await _context.AddAsync(invite);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> AnyInviteAsync(Guid token, string email, int companyId)
+        {
             try
             {
-                await _context.AddAsync(invite);
-                await _context.SaveChangesAsync();
+                bool result = await _context.Invites.Where(i => i.CompanyId == companyId)
+                                                    .AnyAsync(i => i.CompanyToken == token && i.InviteeEmail == email);
+                return result;
             }
             catch (Exception)
             {
@@ -43,20 +71,16 @@ namespace TitanTracker.Services
             }
         }
 
-        public Task<bool> AnyInviteAsync(Guid token, string email, int companyId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Invite> GetInviteAsync(int inviteId, int companyId)
         {
             try
             {
                 Invite invite = await _context.Invites.Where(i => i.CompanyId == companyId)
-                                                       .Include(i => i.Company)
-                                                       .Include(i => i.Project)
-                                                        .Include(i => i.Invitor)
-                                                        .FirstOrDefaultAsync(i => i.Id == inviteId);
+                                               .Include(i => i.Company)
+                                               .Include(i => i.Project)
+                                               .Include(i => i.Invitor)
+                                               .FirstOrDefaultAsync(i => i.Id == inviteId);
+
                 return invite;
             }
             catch (Exception)
@@ -70,10 +94,11 @@ namespace TitanTracker.Services
             try
             {
                 Invite invite = await _context.Invites.Where(i => i.CompanyId == companyId)
-                                                       .Include(i => i.Company)
-                                                       .Include(i => i.Project)
-                                                        .Include(i => i.Invitor)
-                                                        .FirstOrDefaultAsync(i => i.CompanyToken == token && i.InviteeEmail == email);
+                                               .Include(i => i.Company)
+                                               .Include(i => i.Project)
+                                               .Include(i => i.Invitor)
+                                               .FirstOrDefaultAsync(i => i.CompanyToken == token && i.InviteeEmail == email);
+
                 return invite;
             }
             catch (Exception)
@@ -82,9 +107,39 @@ namespace TitanTracker.Services
             }
         }
 
-        public Task<bool> ValidateInviteCodeAsync(Guid? token)
+        public async Task<bool> ValidateInviteCodeAsync(Guid? token)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (token == null)
+                {
+                    return false;
+                }
+
+                bool result = false;
+                Invite invite = await _context.Invites.FirstOrDefaultAsync(i => i.CompanyToken == token);
+
+                if (invite != null)
+                {
+                    // Determine Invite Date
+                    DateTime inviteDate = invite.InviteDate.DateTime;
+
+                    // Custom Validation of invite based on the date it was issued.
+                    // in this case, invites are valid for 7 days.
+                    bool validDate = (DateTime.Now - inviteDate).TotalDays <= 7;
+
+                    if (validDate)
+                    {
+                        result = invite.IsValid;
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

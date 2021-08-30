@@ -40,7 +40,7 @@ namespace TitanTracker.Models
         public int TicketTypeId { get; set; }
 
         [DisplayName("TicketPriority")]
-        public int TicketPriotiryId { get; set; }
+        public int TicketPriorityId { get; set; }
 
         [DisplayName("Ticket Status")]
         public int TicketStatusId { get; set; }
@@ -50,9 +50,6 @@ namespace TitanTracker.Models
 
         [DisplayName("Ticket Developer")]
         public string DeveloperUserId { get; set; }
-
-        [NotMapped]
-        public string CompnayId { get; set; }
 
         //Navigation Properties
 

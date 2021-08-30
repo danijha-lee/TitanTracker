@@ -19,6 +19,21 @@ namespace TitanTracker.Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+            modelBuilder.Entity("BTUserProject", b =>
+                {
+                    b.Property<string>("MembersId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProjectsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MembersId", "ProjectsId");
+
+                    b.HasIndex("ProjectsId");
+
+                    b.ToTable("BTUserProject");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -272,8 +287,8 @@ namespace TitanTracker.Data.Migrations
                     b.Property<int>("CompanyId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CompanyToken")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("CompanyToken")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
@@ -368,9 +383,6 @@ namespace TitanTracker.Data.Migrations
                     b.Property<bool>("Archived")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("BTUserId")
-                        .HasColumnType("text");
-
                     b.Property<int?>("CompanyId")
                         .HasColumnType("integer");
 
@@ -401,8 +413,6 @@ namespace TitanTracker.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BTUserId");
 
                     b.HasIndex("CompanyId");
 
@@ -452,10 +462,7 @@ namespace TitanTracker.Data.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("TicketPriorityId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TicketPriotiryId")
+                    b.Property<int>("TicketPriorityId")
                         .HasColumnType("integer");
 
                     b.Property<int>("TicketStatusId")
@@ -636,6 +643,21 @@ namespace TitanTracker.Data.Migrations
                     b.ToTable("TicketTypes");
                 });
 
+            modelBuilder.Entity("BTUserProject", b =>
+                {
+                    b.HasOne("TitanTracker.Models.BTUser", null)
+                        .WithMany()
+                        .HasForeignKey("MembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TitanTracker.Models.Project", null)
+                        .WithMany()
+                        .HasForeignKey("ProjectsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -756,10 +778,6 @@ namespace TitanTracker.Data.Migrations
 
             modelBuilder.Entity("TitanTracker.Models.Project", b =>
                 {
-                    b.HasOne("TitanTracker.Models.BTUser", null)
-                        .WithMany("Projects")
-                        .HasForeignKey("BTUserId");
-
                     b.HasOne("TitanTracker.Models.Company", "Company")
                         .WithMany("Projects")
                         .HasForeignKey("CompanyId");
@@ -791,7 +809,9 @@ namespace TitanTracker.Data.Migrations
 
                     b.HasOne("TitanTracker.Models.TicketPriority", "TicketPriority")
                         .WithMany()
-                        .HasForeignKey("TicketPriorityId");
+                        .HasForeignKey("TicketPriorityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("TitanTracker.Models.TicketStatus", "TicketStatus")
                         .WithMany()
@@ -867,11 +887,6 @@ namespace TitanTracker.Data.Migrations
                     b.Navigation("Ticket");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TitanTracker.Models.BTUser", b =>
-                {
-                    b.Navigation("Projects");
                 });
 
             modelBuilder.Entity("TitanTracker.Models.Company", b =>

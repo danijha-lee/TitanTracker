@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TitanTracker.Data;
 using TitanTracker.Models;
 using TitanTracker.Services.Interfaces;
@@ -12,7 +13,7 @@ namespace TitanTracker.Services
     public class BTNotificationService : IBTNotificationService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IEmailSender emailSender;
+        private readonly IEmailSender _emailSender;
         private readonly IBTRolesService _rolesService;
 
         public BTNotificationService(ApplicationDbContext context, IEmailSender emailSender, IBTRolesService rolesService)
@@ -22,21 +23,24 @@ namespace TitanTracker.Services
             _rolesService = rolesService;
         }
 
-        public Task AddNotificationAsync(Notification notification)
+        public async Task AddNotificationAsync(Notification notification)
         {
-            throw new NotImplementedException();
+            await _context.AddAsync(notification);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<Notification>> GetReceivedNotificationsAsync(string userId)
         {
+            List<Notification> notifications = new();
             try
             {
-                List<Notification> notifications = await _context.Notifications
-                                                 .Include(n => n.Recipient)
-                                                 .Include(n => n.Sender)
-                                                 .Include(n => n.Ticket)
-                                                 .ThenInclude(t => t.Project)
-                                                .Where(n => n.RecipientId == userId).ToListAsync();
+                notifications = await _context.Notifications.Where(n => n.RecipientId == userId)
+                                                            .Include(n => n.Recipient)
+                                                            .Include(n => n.Sender)
+                                                            .Include(n => n.Ticket)
+                                                             .ThenInclude(t => t.Project)
+                                                            .ToListAsync();
+
                 return notifications;
             }
             catch (Exception)
@@ -47,14 +51,15 @@ namespace TitanTracker.Services
 
         public async Task<List<Notification>> GetSentNotificationsAsync(string userId)
         {
+            List<Notification> notifications = new();
             try
             {
-                List<Notification> notifications = await _context.Notifications
-                                                 .Include(n => n.Recipient)
-                                                 .Include(n => n.Sender)
-                                                 .Include(n => n.Ticket)
-                                                 .ThenInclude(t => t.Project)
-                                                .Where(n => n.SenderId == userId).ToListAsync();
+                notifications = await _context.Notifications.Where(n => n.SenderId == userId)
+                                                            .Include(n => n.Recipient)
+                                                            .Include(n => n.Sender)
+                                                            .Include(n => n.Ticket)
+                                                             .ThenInclude(t => t.Project)
+                                                            .ToListAsync();
                 return notifications;
             }
             catch (Exception)
@@ -63,19 +68,64 @@ namespace TitanTracker.Services
             }
         }
 
-        public Task<bool> SendEmailNotificationAsync(Notification notification, string emailSubject)
+        public async Task<bool> SendEmailNotificationAsync(Notification notification, string emailSubject)
         {
-            throw new NotImplementedException();
+            try
+            {
+                BTUser btUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == notification.RecipientId);
+
+                string btUserEmail = btUser.Email;
+                string message = notification.Message;
+
+                //send Email
+                try
+                {
+                    await _emailSender.SendEmailAsync(btUserEmail, emailSubject, message);
+                    return true;
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task SendEmailNotificationsByRoleAsync(Notification notification, int companyId, string role)
+        public async Task SendEmailNotificationsByRoleAsync(Notification notification, int companyId, string role)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<BTUser> members = await _rolesService.GetUsersInRoleAsync(role, companyId);
+
+                foreach (BTUser btUser in members)
+                {
+                    notification.RecipientId = btUser.Id;
+                    await SendEmailNotificationAsync(notification, notification.Title);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task SendMembersEmailNotificationsAsync(Notification notification, List<BTUser> members)
+        public async Task SendMembersEmailNotificationsAsync(Notification notification, List<BTUser> members)
         {
-            throw new NotImplementedException();
+            try
+            {
+                foreach (BTUser btUser in members)
+                {
+                    notification.RecipientId = btUser.Id;
+                    await SendEmailNotificationAsync(notification, notification.Title);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
