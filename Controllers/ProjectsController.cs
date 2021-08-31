@@ -6,17 +6,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TitanTracker.Data;
+using TitanTracker.Extensions;
 using TitanTracker.Models;
+using TitanTracker.Models.Enums;
+using TitanTracker.Models.ViewModels;
+using TitanTracker.Services.Interfaces;
 
 namespace TitanTracker.Controllers
 {
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTCompanyInfoService _companyInfoService;
+        private readonly IBTRolesService _rolesService;
+        private readonly IBTProjectService _projectService;
 
-        public ProjectsController(ApplicationDbContext context)
+        public ProjectsController(ApplicationDbContext context,
+                                  IBTCompanyInfoService companyInfoService,
+                                  IBTRolesService rolesService,
+                                  IBTProjectService projectService)
         {
             _context = context;
+            _companyInfoService = companyInfoService;
+            _rolesService = rolesService;
+            _projectService = projectService;
         }
 
         // GET: Projects
@@ -24,6 +37,56 @@ namespace TitanTracker.Controllers
         {
             var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
             return View(await applicationDbContext.ToListAsync());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AssignMembers(int id)
+        {
+            ProjectMembersViewModel model = new();
+
+            int companyId = User.Identity.GetCompanyId().Value;
+            //All Company Projedcts based on "id" parameter
+            List<Project> projects = await _projectService.GetAllProjectsByCompany(companyId);
+            Project project = projects.FirstOrDefault(p => p.Id == id);
+
+            model.Project = project;
+
+            List<BTUser> developers = await _rolesService.GetUsersInRoleAsync(Roles.Developer.ToString(), companyId);
+            List<BTUser> submitters = await _rolesService.GetUsersInRoleAsync(Roles.Submitter.ToString(), companyId);
+
+            List<BTUser> users = developers.Concat(submitters).ToList();
+
+            List<string> members = project.Members.Select(m => m.Id).ToList();
+            model.Users = new MultiSelectList(users, "Id", "FullName", members);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.SelectedUsers != null)
+                {
+                    List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id))
+                                                                   .Select(m => m.Id).ToList();
+
+                    foreach (string item in memberIds)
+                    {
+                        await _projectService.RemoveUserFromProjectAsync(item, model.Project.Id);
+                    }
+
+                    foreach (string item in model.SelectedUsers)
+                    {
+                        await _projectService.AddUserToProjectAsync(item, model.Project.Id);
+                    }
+                    //goto project details
+                    //return RedirectToAction("Details", "Projects", new {id = model.Project.Id });
+                }
+            }
+            return RedirectToAction("AssignMembers", new { id = model.Project.Id });
         }
 
         // GET: Projects/Details/5
