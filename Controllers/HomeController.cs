@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TitanTracker.Extensions;
 using TitanTracker.Models;
+using TitanTracker.Models.Enums;
 using TitanTracker.Services.Interfaces;
 
 namespace TitanTracker.Controllers
@@ -22,6 +24,11 @@ namespace TitanTracker.Controllers
             _projectService = projectService;
         }
 
+        //[Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Developer")]
+        //[Authorize(Roles = "Submitter")]
+        //[Authorize(Roles = "DemoUser")]
+        //[Authorize(Roles = "ProjectManager")]
         public IActionResult Index()
         {
             return View();
@@ -32,6 +39,11 @@ namespace TitanTracker.Controllers
             return View();
         }
 
+        //[Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Developer")]
+        //[Authorize(Roles = "Submitter")]
+        //[Authorize(Roles = "DemoUser")]
+        //[Authorize(Roles = "ProjectManager")]
         public async Task<IActionResult> DashboardAsync()
         {
             List<Project> model = new();

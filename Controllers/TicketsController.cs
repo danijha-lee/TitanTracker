@@ -7,16 +7,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TitanTracker.Data;
 using TitanTracker.Models;
+using TitanTracker.Models.Enums;
+using TitanTracker.Models.ViewModels;
+using TitanTracker.Services.Interfaces;
 
 namespace TitanTracker.Controllers
 {
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTTicketService _ticketService;
+        private readonly IBTProjectService _projectService;
 
-        public TicketsController(ApplicationDbContext context)
+        public TicketsController(ApplicationDbContext context, IBTTicketService ticketService, IBTProjectService projectService)
         {
             _context = context;
+            _ticketService = ticketService;
+            _projectService = projectService;
         }
 
         // GET: Tickets
@@ -180,5 +187,22 @@ namespace TitanTracker.Controllers
         {
             return _context.Tickets.Any(e => e.Id == id);
         }
+
+        //public async Task<IActionResult> AssignDeveloper(int id)
+        //{
+        //    AssignDeveloperViewModel model = new();
+
+        //    model.Ticket = await _ticketService.GetTicketByIdAsync(id);
+
+        //    model.Developers = await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, Roles.Developer.ToString()),
+        //                         "Id", "FullName");
+        //    return View(model);
+        //}
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public IActionResult AssignDeveloper(AssignDeveloperViewModel model)
+        //{
+        //}
     }
 }
