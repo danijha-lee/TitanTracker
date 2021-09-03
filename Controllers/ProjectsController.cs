@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,16 +21,19 @@ namespace TitanTracker.Controllers
         private readonly IBTCompanyInfoService _companyInfoService;
         private readonly IBTRolesService _rolesService;
         private readonly IBTProjectService _projectService;
+        private readonly IBTFileService _fileService;
 
         public ProjectsController(ApplicationDbContext context,
                                   IBTCompanyInfoService companyInfoService,
                                   IBTRolesService rolesService,
-                                  IBTProjectService projectService)
+                                  IBTProjectService projectService,
+                                  IBTFileService fileService)
         {
             _context = context;
             _companyInfoService = companyInfoService;
             _rolesService = rolesService;
             _projectService = projectService;
+            _fileService = fileService;
         }
 
         // GET: Projects
@@ -110,10 +114,15 @@ namespace TitanTracker.Controllers
         }
 
         // GET: Projects/Create
-        public IActionResult Create()
+        [Authorize(Roles = "Admin, ProjectManager")]
+        public async Task<IActionResult> Create()
         {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            // AddProjectWithPMViewModel model = new();
+            // model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName");
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id");
+            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name");
             return View();
         }
 
@@ -123,6 +132,7 @@ namespace TitanTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CompanyId,Name,Description,StartDate,EndDate,ProjectPriorityId,FileName,FileData,FileContentType,Archived")] Project project)
+
         {
             if (ModelState.IsValid)
             {

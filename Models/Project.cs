@@ -37,7 +37,7 @@ namespace TitanTracker.Models
 
         [NotMapped]
         [DataType(DataType.Upload)]
-        public IFormFile FormFile { get; set; }
+        public IFormFile ImageFormFile { get; set; }
 
         [DisplayName("File Name")]
         public string FileName { get; set; }
