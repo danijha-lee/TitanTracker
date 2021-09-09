@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,25 +23,29 @@ namespace TitanTracker.Controllers
         private readonly IBTRolesService _rolesService;
         private readonly IBTProjectService _projectService;
         private readonly IBTFileService _fileService;
+        private readonly UserManager<BTUser> _userManager;
 
         public ProjectsController(ApplicationDbContext context,
                                   IBTCompanyInfoService companyInfoService,
                                   IBTRolesService rolesService,
                                   IBTProjectService projectService,
-                                  IBTFileService fileService)
+                                  IBTFileService fileService,
+                                  UserManager<BTUser> userManager)
         {
             _context = context;
             _companyInfoService = companyInfoService;
             _rolesService = rolesService;
             _projectService = projectService;
             _fileService = fileService;
+            _userManager = userManager;
         }
 
         // GET: Projects
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
-            return View(await applicationDbContext.ToListAsync());
+            int companyId = User.Identity.GetCompanyId().Value;
+            List<Project> projects = await _projectService.GetAllProjectsByCompany(companyId);
+            return View(projects);
         }
 
         [HttpGet]
@@ -119,11 +124,13 @@ namespace TitanTracker.Controllers
         {
             int companyId = User.Identity.GetCompanyId().Value;
 
-            // AddProjectWithPMViewModel model = new();
-            // model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName");
+            AddProjectWithPMViewModel model = new();
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName");
+            model.PriorityList = new SelectList(_context.ProjectPriorities, "Id", "Name");
+
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
             ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name");
-            return View();
+            return View(model);
         }
 
         // POST: Projects/Create
@@ -131,18 +138,45 @@ namespace TitanTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CompanyId,Name,Description,StartDate,EndDate,ProjectPriorityId,FileName,FileData,FileContentType,Archived")] Project project)
+        public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
 
         {
             if (ModelState.IsValid)
             {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    if (model.Project.ImageFormFile != null)
+                    {
+                        model.Project.FileData = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
+                        model.Project.FileName = model.Project.ImageFormFile.FileName;
+                        model.Project.FileContentType = model.Project.ImageFormFile.ContentType;
+                    }
+                    model.Project.CompanyId = User.Identity.GetCompanyId().Value;
+
+                    await _projectService.AddNewProjectAsync(model.Project);
+
+                    //Add PM
+                    if (!string.IsNullOrEmpty(model.PmId))
+                    {
+                        await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
+                    }
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", project.ProjectPriorityId);
-            return View(project);
+
+            return View(model);
+        }
+
+        //Get: Projects/MyProjects
+        public async Task<IActionResult> MyProjects()
+        {
+            string userId = _userManager.GetUserId(User);
+            List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
+            return View(projects);
         }
 
         // GET: Projects/Edit/5
@@ -168,7 +202,7 @@ namespace TitanTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,Name,Description,StartDate,EndDate,ProjectPriorityId,FileName,FileData,FileContentType,Archived")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CompanyId,Name,Description,StartDate,EndDate,ProjectPriorityId,FileName,FileData,FileContentType,ImageFormFile,")] Project project)
         {
             if (id != project.Id)
             {
@@ -179,8 +213,13 @@ namespace TitanTracker.Controllers
             {
                 try
                 {
-                    _context.Update(project);
-                    await _context.SaveChangesAsync();
+                    byte[] newImageData = await _fileService.ConvertFileToByteArrayAsync(project.ImageFormFile);
+                    if (project.FileData != newImageData && newImageData != null)
+                    {
+                        project.FileData = newImageData;
+                        project.FileName = project.ImageFormFile.FileName;
+                        project.FileContentType = project.ImageFormFile.ContentType;
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -193,7 +232,7 @@ namespace TitanTracker.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Projects");
             }
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
             ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", project.ProjectPriorityId);

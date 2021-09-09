@@ -247,11 +247,6 @@ namespace TitanTracker.Services
             }
         }
 
-        public Task<BTUser> GetTicketDeveloperAsync(int ticketId)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<List<Ticket>> GetTicketsByRoleAsync(string role, string userId, int companyId)
         {
             List<Ticket> tickets = new();
@@ -339,14 +334,23 @@ namespace TitanTracker.Services
             }
         }
 
-        public Task<int?> LookupTicketTypeIdAsync(string typeName)
+        public async Task<int?> LookupTicketTypeIdAsync(string typeName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TicketType typeId = await _context.TicketTypes.FirstOrDefaultAsync(p => p.Name == typeName);
+                return typeId.Id;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task UpdateTicketAsync(Ticket ticket)
+        public async Task UpdateTicketAsync(Ticket ticket)
         {
-            throw new NotImplementedException();
+            _context.Update(ticket);
+            await _context.SaveChangesAsync();
         }
     }
 }
