@@ -213,13 +213,15 @@ namespace TitanTracker.Controllers
             {
                 try
                 {
-                    byte[] newImageData = await _fileService.ConvertFileToByteArrayAsync(project.ImageFormFile);
-                    if (project.FileData != newImageData && newImageData != null)
+                    if (project.ImageFormFile != null)
                     {
+                        byte[] newImageData = await _fileService.ConvertFileToByteArrayAsync(project.ImageFormFile);
                         project.FileData = newImageData;
                         project.FileName = project.ImageFormFile.FileName;
                         project.FileContentType = project.ImageFormFile.ContentType;
                     }
+
+                    await _projectService.UpdateProjectAsync(project);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

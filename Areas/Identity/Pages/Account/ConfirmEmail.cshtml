@@ -1,7 +1,16 @@
 ﻿@page
 @model ConfirmEmailModel
 @{
-    ViewData["Title"] = "Confirm email";
+    Layout = "_LoginLayout";
+    ViewData["Title"] = "Email Confirmed";
+
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="infobox-2">
+    <div class="info-icon">
+        <svg> ... </svg>
+    </div>
+    <h1 class="info-heading">@ViewData.[Title]</h1>
+    <p class="info-text">@Model.StatusMessage</p>
+    <a class="info-link" asp-area="Identity" asp-page="/Account/Login">SIGN IN <svg> ... </svg></a>
+</div>

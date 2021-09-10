@@ -27,6 +27,11 @@ namespace TitanTracker.Services
 
         public async Task<byte[]> ConvertFileToByteArrayAsync(IFormFile file)
         {
+            if (file == null)
+            {
+                return null;
+            }
+
             try
             {
                 MemoryStream memoryStream = new();

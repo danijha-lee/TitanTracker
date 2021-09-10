@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TitanTracker.Models
 {
@@ -11,7 +12,7 @@ namespace TitanTracker.Models
         public string Comment { get; set; }
 
         //created
-        [DisplayName("Date")]
+        [DisplayName("Created Date")]
         public DateTimeOffset Created { get; set; }
 
         //TicketId (Foreign Key)

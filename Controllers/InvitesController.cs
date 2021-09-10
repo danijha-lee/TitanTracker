@@ -2,21 +2,41 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TitanTracker.Data;
+using TitanTracker.Extensions;
 using TitanTracker.Models;
+using TitanTracker.Services.Interfaces;
 
 namespace TitanTracker.Controllers
 {
     public class InvitesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTProjectService _projectService;
+        private readonly IDataProtector _protector;
+        private readonly IEmailSender _emailSender;
+        private readonly IBTInviteService _inviteService;
+        private readonly UserManager<BTUser> _userManager;
 
-        public InvitesController(ApplicationDbContext context)
+        public InvitesController(ApplicationDbContext context,
+                                    IBTProjectService projectService,
+                                    IDataProtectionProvider dataProtectionProvider,
+                                    IEmailSender emailSender,
+                                    IBTInviteService inviteService,
+                                    UserManager<BTUser> userManager)
         {
             _context = context;
+            _projectService = projectService;
+            _protector = dataProtectionProvider.CreateProtector("DL.TitanTracker.21");
+            _emailSender = emailSender;
+            _inviteService = inviteService;
+            _userManager = userManager;
         }
 
         // GET: Invites
@@ -47,10 +67,14 @@ namespace TitanTracker.Controllers
         }
 
         // GET: Invites/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
+
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name");
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompany(companyId), "Id", "Name");
+
+            //TODO: sweet alert if model state is invalid
             return View();
         }
 
@@ -59,17 +83,76 @@ namespace TitanTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,InviteDate,JoinDate,CompanyToken,CompanyId,ProjectId,InviteeId,InvitorId,InviteeEmail,FirstName,LastName,IsValid")] Invite invite)
+        public async Task<IActionResult> Create([Bind("Id,ProjectId,InviteeId,,InviteeEmail,FirstName,LastName")] Invite invite)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(invite);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                int companyId = User.Identity.GetCompanyId().Value;
+
+                Guid guid = Guid.NewGuid();
+
+                var token = _protector.Protect(guid.ToString());
+                var email = _protector.Protect(invite.InviteeEmail);
+                var company = _protector.Protect(companyId.ToString());
+
+                var callbackUrl = Url.Action("ProcessInvite", "Invites", new { token, email, company }, protocol: Request.Scheme);
+
+                var body = invite.Message + Environment.NewLine + "Please join my Company."
+                    + Environment.NewLine + "Please click the following link to join <a href=\""
+                    + callbackUrl + "\">COLLABORATE</a>";
+
+                var destination = invite.InviteeEmail;
+                var subject = "Company Invite";
+
+                await _emailSender.SendEmailAsync(destination, subject, body);
+
+                //Create record in the Invites table
+                invite.CompanyToken = guid;
+                invite.CompanyId = companyId;
+                invite.InviteDate = DateTimeOffset.Now;
+                invite.InvitorId = _userManager.GetUserId(User);
+                invite.IsValid = true;
+
+                await _inviteService.AddNewInviteAsync(invite);
+
+                return RedirectToAction("Dashboard", "Home");
             }
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", invite.CompanyId);
             ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", invite.ProjectId);
             return View(invite);
+        }
+
+        //Add ProcessInvite Actions
+        [HttpGet]
+        public async Task<IActionResult> ProcessInvite(string token, string email, string company)
+        {
+            if (token == null)
+            {
+                return NotFound();
+            }
+            Guid companyToken = Guid.Parse(_protector.Unprotect(token));
+            string inviteeEmail = _protector.Unprotect(email);
+            int companyId = int.Parse(_protector.Unprotect(company));
+            try
+            {
+                Invite invite = await _inviteService.GetInviteAsync(companyToken, inviteeEmail, companyId);
+                if (invite != null)
+                {
+                    return View(invite);
+                }
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ProcessInvite(Invite invite)
+        {
+            return RedirectToPage("RegisterByInvite", new { invite });
         }
 
         // GET: Invites/Edit/5
