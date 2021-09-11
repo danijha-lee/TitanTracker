@@ -11,6 +11,8 @@ namespace TitanTracker.Services.Interfaces
         // CRUD Methods
         public Task AddNewTicketAsync(Ticket ticket);
 
+        public Task AddNewTicketCommentAsync(TicketComment ticketComment);
+
         public Task UpdateTicketAsync(Ticket ticket);
 
         public Task<Ticket> GetTicketByIdAsync(int ticketId);

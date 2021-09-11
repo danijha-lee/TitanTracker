@@ -6,6 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using TitanTracker.Extensions;
+using static TitanTracker.Extensions.MaxFileSizeAttribute;
 
 namespace TitanTracker.Models
 {
@@ -28,6 +30,8 @@ namespace TitanTracker.Models
 
         [NotMapped]
         [DataType(DataType.Upload)]
+        [MaxFileSize(2 * 1024 * 1024)]
+        [AllowedExtensions(new string[] { ".jpg", ".png", ".doc", ".docx", ".xls", ".xlsx", ".pdf" })]
         public IFormFile FormFile { get; set; }
 
         [DisplayName("File Name")]

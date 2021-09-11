@@ -36,6 +36,12 @@ namespace TitanTracker.Services
             }
         }
 
+        public async Task AddNewTicketCommentAsync(TicketComment ticketComment)
+        {
+            _context.Add(ticketComment);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task ArchiveTicketAsync(Ticket ticket)
         {
             try
@@ -225,7 +231,22 @@ namespace TitanTracker.Services
 
         public async Task<Ticket> GetTicketByIdAsync(int ticketId)
         {
-            Ticket ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == ticketId);
+            Ticket ticket = await _context.Tickets
+
+                                                          .Include(t => t.Attachments)
+                                                           .ThenInclude(t => t.User)
+                                                             .Include(t => t.Comments)
+                                                          .ThenInclude(t => t.User)
+                                                           .Include(t => t.DeveloperUser)
+                                                            .Include(t => t.History)
+                                                             .ThenInclude(t => t.User)
+                                                             .Include(t => t.OwnerUser)
+                                                              .Include(t => t.TicketPriority)
+                                                               .Include(t => t.TicketStatus)
+                                                                .Include(t => t.TicketType)
+                                                                 .Include(t => t.Project)
+                                                                 .FirstOrDefaultAsync(t => t.Id == ticketId);
+
             return ticket;
         }
 

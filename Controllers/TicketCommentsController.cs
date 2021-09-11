@@ -2,21 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TitanTracker.Data;
 using TitanTracker.Models;
+using TitanTracker.Services.Interfaces;
 
 namespace TitanTracker.Controllers
 {
     public class TicketCommentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTTicketService _ticketService;
+        private readonly UserManager<BTUser> _userManager;
 
-        public TicketCommentsController(ApplicationDbContext context)
+        public TicketCommentsController(ApplicationDbContext context,
+                                       IBTTicketService ticketService,
+                                       UserManager<BTUser> userManager)
         {
             _context = context;
+            _ticketService = ticketService;
+            _userManager = userManager;
         }
 
         // GET: TicketComments
@@ -59,13 +67,16 @@ namespace TitanTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Comment,Created,TicketId,UserId")] TicketComment ticketComment)
+        public async Task<IActionResult> Create([Bind("Id,Comment,TicketId")] TicketComment ticketComment)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(ticketComment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ticketComment.Created = DateTimeOffset.Now;
+                ticketComment.UserId = _userManager.GetUserId(User);
+
+                await _ticketService.AddNewTicketCommentAsync(ticketComment);
+
+                return RedirectToAction("Details", "Tickets", new { id = ticketComment.TicketId });
             }
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketComment.TicketId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketComment.UserId);

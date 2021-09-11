@@ -31,15 +31,14 @@ namespace TitanTracker.Services
 
         public async Task<List<Notification>> GetReceivedNotificationsAsync(string userId)
         {
-            List<Notification> notifications = new();
             try
             {
-                notifications = await _context.Notifications.Where(n => n.RecipientId == userId)
+                List<Notification> notifications = await _context.Notifications
                                                             .Include(n => n.Recipient)
                                                             .Include(n => n.Sender)
                                                             .Include(n => n.Ticket)
                                                              .ThenInclude(t => t.Project)
-                                                            .ToListAsync();
+                                                            .Where(n => n.RecipientId == userId).ToListAsync();
 
                 return notifications;
             }
@@ -51,15 +50,14 @@ namespace TitanTracker.Services
 
         public async Task<List<Notification>> GetSentNotificationsAsync(string userId)
         {
-            List<Notification> notifications = new();
             try
             {
-                notifications = await _context.Notifications.Where(n => n.SenderId == userId)
+                List<Notification> notifications = await _context.Notifications
                                                             .Include(n => n.Recipient)
                                                             .Include(n => n.Sender)
                                                             .Include(n => n.Ticket)
                                                              .ThenInclude(t => t.Project)
-                                                            .ToListAsync();
+                                                           .Where(n => n.SenderId == userId).ToListAsync();
                 return notifications;
             }
             catch (Exception)

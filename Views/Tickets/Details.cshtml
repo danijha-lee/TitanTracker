@@ -1,84 +1,311 @@
 ﻿@model TitanTracker.Models.Ticket
 
+@using Microsoft.AspNetCore.Identity
+@using TitanTracker.Services.Interfaces
+
+@inject UserManager<BTUser> UserManager
+@inject TitanTracker.Services.Interfaces.IBTCompanyInfoService companyInfoService
+@inject TitanTracker.Services.Interfaces.IBTFileService  fileService
+@inject TitanTracker.Services.Interfaces.IBTNotificationService notificationService
+@inject TitanTracker.Services.Interfaces.IBTProjectService projectservice
+@inject TitanTracker.Services.Interfaces.IBTRolesService rolesService
+@inject TitanTracker.Services.Interfaces.IBTTicketHistoryService ticketHistoryService
+@inject TitanTracker.Services.Interfaces.IBTTicketService ticketService
+
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="layout-px-spacing">
 
-<div>
-    <h4>Ticket</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Archived)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Archived)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketPriorityId)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TicketPriorityId)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Project)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Project.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketType)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TicketType.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketStatus)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TicketStatus.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.OwnerUser)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.OwnerUser.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DeveloperUser)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DeveloperUser.Id)
-        </dd>
-    </dl>
+    <div class="row layout-top-spacing">
+
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+            <div class="widget widget-five">
+
+                <div class="widget-heading">
+
+                    <a href="javascript:void(0)" class="task-info">
+
+                        <div class="usr-avatar">
+                            <span>FD</span>
+                        </div>
+
+                        <div class="w-title">
+
+                            <h5>@Model.Project.Name</h5>
+                        </div>
+                    </a>
+
+                    <div class="task-action">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" href="#" role="button" id="pendingTask" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="pendingTask" style="will-change: transform;">
+                                <a class="dropdown-item" asp-action="Details" asp-controller="Projects" asp-route-id="@Model.ProjectId">View Project</a>
+                                <a class="dropdown-item" asp-action="Edit" asp-controller="Projects" asp-route-id="@Model.ProjectId">Edit Project</a>
+                                @*<a class="dropdown-item" href="javascript:void(0);">Mark as Done</a>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-content">
+
+                    <p>@Model.Project.Description</p>
+
+                    <div class="progress-data">
+
+                        <div class="progress-info">
+                            <div class="progress-stats"><p>86.2%</p></div>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 65%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+
+                    <div class="meta-info">
+
+                        @*<div class="avatar--group">
+
+                                <div class="avatar translateY-axis more-group">
+                                    <span class="avatar-title">+6</span>
+                                </div>
+                                <div class="avatar translateY-axis">
+                                    <img alt="avatar" src="assets/img/90x90.jpg" />
+                                </div>
+                                <div class="avatar translateY-axis">
+                                    <img alt="avatar" src="assets/img/90x90.jpg" />
+                                </div>
+                                <div class="avatar translateY-axis">
+                                    <img alt="avatar" src="assets/img/90x90.jpg" />
+                                </div>
+                            </div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="@Model.Id" name="TicketId">
+
+                <div class="media-body ml-3">
+                    <label class="form-label d-block mb-2">Add Attachment</label>
+                    <label>
+                        Description
+                        <input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" />
+                    </label><br />
+                    <label class="btn btn-outline-primary btn-sm">
+                        <input asp-for="@Model.Attachments.FirstOrDefault().FormFile" type="file" />
+                    </label>
+                    <button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
+                </div>
+            </form>
+        </div>
+        <div class="row clearfix">
+            @foreach (TicketAttachment item in Model.Attachments)
+            {
+                <div class="col-sm-2">
+                    <div class="card">
+                        <div class="file">
+                            <a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
+
+                                <div class="hover">
+                                    <button type="button" class="btn btn-icon btn-danger">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="icon">
+                                    <img src="@fileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
+                                </div>
+                                <div class="file-name">
+                                    <p>@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
+                                    <small>Size: @fileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>}
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+            <div class="widget widget-activity-five">
+
+                <div class="widget-heading">
+                    <h5 class="">Activity Log</h5>
+
+                    <div class="task-action">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" href="#" role="button" id="pendingTask" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="pendingTask" style="will-change: transform;">
+                                <a class="dropdown-item" href="javascript:void(0);">View All</a>
+                                <a class="dropdown-item" href="javascript:void(0);">Mark as Read</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-content">
+
+                    <div class="w-shadow-top"></div>
+
+                    <div class="mt-container mx-auto">
+                        <div class="timeline-line">
+
+                            <div class="item-timeline timeline-new">
+                                <div class="t-dot">
+                                    <div class="t-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
+                                </div>
+                                <div class="t-content">
+                                    <div class="t-uppercontent">
+                                        <h5>New project created : <a href="javscript:void(0);"><span>[Cork Admin Template]</span></a></h5>
+                                    </div>
+                                    <p>27 Feb, 2020</p>
+                                </div>
+                            </div>
+
+                            <div class="item-timeline timeline-new">
+                                <div class="t-dot">
+                                    <div class="t-success"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div>
+                                </div>
+                                <div class="t-content">
+                                    <div class="t-uppercontent">
+                                        <h5>Mail sent to <a href="javascript:void(0);">HR</a> and <a href="javascript:void(0);">Admin</a></h5>
+                                    </div>
+                                    <p>28 Feb, 2020</p>
+                                </div>
+                            </div>
+
+                            <div class="item-timeline timeline-new">
+                                <div class="t-dot">
+                                    <div class="t-primary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                </div>
+                                <div class="t-content">
+                                    <div class="t-uppercontent">
+                                        <h5>Server Logs Updated</h5>
+                                    </div>
+                                    <p>27 Feb, 2020</p>
+                                </div>
+                            </div>
+
+                            <div class="item-timeline timeline-new">
+                                <div class="t-dot">
+                                    <div class="t-danger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+                                </div>
+                                <div class="t-content">
+                                    <div class="t-uppercontent">
+                                        <h5>Task Completed : <a href="javscript:void(0);"><span>[Backup Files EOD]</span></a></h5>
+                                    </div>
+                                    <p>01 Mar, 2020</p>
+                                </div>
+                            </div>
+
+                            <div class="item-timeline timeline-new">
+                                <div class="t-dot">
+                                    <div class="t-warning"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg></div>
+                                </div>
+                                <div class="t-content">
+                                    <div class="t-uppercontent">
+                                        <h5>Documents Submitted from <a href="javascript:void(0);">Sara</a></h5>
+                                        <span class=""></span>
+                                    </div>
+                                    <p>10 Mar, 2020</p>
+                                </div>
+                            </div>
+
+                            <div class="item-timeline timeline-new">
+                                <div class="t-dot">
+                                    <div class="t-dark"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-server"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6" y2="6"></line><line x1="6" y1="18" x2="6" y2="18"></line></svg></div>
+                                </div>
+                                <div class="t-content">
+                                    <div class="t-uppercontent">
+                                        <h5>Server rebooted successfully</h5>
+                                        <span class=""></span>
+                                    </div>
+                                    <p>06 Apr, 2020</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-shadow-bottom"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group mb-4">
+            <form asp-action="Create" asp-controller="TicketComments" method="post">
+                <input hidden name="TicketId" id="TicketId" value="@Model.Id" />
+                @*<div class="input-group-prepend">*@
+                <!--<span class="input-group-text">With textarea</span>
+                </div>-->
+                <textarea class="form-control" name="Comment" placeholder="*Add Comment" aria-label="With textarea"></textarea>
+                <button class="btn btn-secondary" type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+            <div class="widget widget-table-one">
+                <div class="widget-heading">
+                    <h5 class="">Comments</h5>
+                    <div class="task-action">
+                        <div class="dropdown">
+                            @*<a class="dropdown-toggle" href="#" role="button" id="pendingTask" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                                </a>*@
+
+                            @*<div class="dropdown-menu dropdown-menu-right" aria-labelledby="pendingTask" style="will-change: transform;">
+                                    <a class="dropdown-item" href="javascript:void(0);">View Report</a>
+                                    <a class="dropdown-item" href="javascript:void(0);">Edit Report</a>
+                                    <a class="dropdown-item" href="javascript:void(0);">Mark as Done</a>
+                                </div>*@
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-content">
+                    @foreach (TicketComment comment in Model.Comments)
+                    {
+                        <div class="transactions-list">
+                            <div class="t-item">
+                                <div class="t-company-name">
+                                    <div class="t-icon">
+                                        <div class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                        </div>
+                                    </div>
+                                    <div class="t-name">
+                                        <h4>@comment.User.FullName</h4>
+                                        <p class="meta-date">@comment.Comment</p>
+                                    </div>
+                                </div>
+                                <div class="t-rate rate-dec">
+                                    <p><span>@comment.Created.ToString("MMM-dd-yyyy")</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<!--  END CONTENT PART  -->
+
+@section Scripts
+            {
+    <script>
+        $(document).ready(function () {
+            App.init();
+        });
+    </script>
+}
