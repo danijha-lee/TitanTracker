@@ -22,15 +22,18 @@ namespace TitanTracker.Controllers
         private readonly IBTTicketService _ticketService;
         private readonly IBTProjectService _projectService;
         private readonly UserManager<BTUser> _userManager;
+        private readonly IBTTicketHistoryService _ticketHistoryService;
 
         public TicketsController(ApplicationDbContext context, IBTTicketService ticketService,
                                                                IBTProjectService projectService,
-                                                                UserManager<BTUser> userManager)
+                                                                UserManager<BTUser> userManager,
+                                                                IBTTicketHistoryService ticketHistoryService)
         {
             _context = context;
             _ticketService = ticketService;
             _projectService = projectService;
             _userManager = userManager;
+            _ticketHistoryService = ticketHistoryService;
         }
 
         // GET: Tickets
@@ -104,6 +107,10 @@ namespace TitanTracker.Controllers
                 ticket.OwnerUserId = btUser.Id;
                 ticket.Created = DateTimeOffset.Now;
                 await _ticketService.AddNewTicketAsync(ticket);
+
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                await _ticketHistoryService.AddHistoryAsync(null, newTicket, btUser.Id);
+
                 //_context.Add(ticket);
                 //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -155,8 +162,12 @@ namespace TitanTracker.Controllers
                 try
                 {
                     BTUser btUser = await _userManager.GetUserAsync(User);
+                    Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     ticket.Updated = DateTimeOffset.Now;
                     await _ticketService.UpdateTicketAsync(ticket);
+
+                    Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                    await _ticketHistoryService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

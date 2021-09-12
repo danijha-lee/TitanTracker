@@ -14,7 +14,7 @@
                 <span>@Model.Project.Name</span>
             </p>
 
-            <form asp-action="AssignMembers" asp-controller="Projects" method="post">
+            <form asp-action="AssignUsers" asp-controller="Projects" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="@Model.Project.Id">
                 <input type="hidden" asp-for="@Model.Project.Name">
@@ -37,6 +37,11 @@
         @Html.ActionLink("Back to List", "Index")
     </div>
 </div>
+
+@section scripts{
+    <script>
+    </script>
+}
 
 @section scripts{
     <script>

@@ -48,6 +48,11 @@ namespace TitanTracker.Controllers
             return View(projects);
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> AddPM(int id)
+        //{
+        //}
+
         [HttpGet]
         public async Task<IActionResult> AssignMembers(int id)
         {
