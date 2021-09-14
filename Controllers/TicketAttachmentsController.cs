@@ -81,7 +81,7 @@ namespace TitanTracker.Controllers
 
                 _context.Add(ticketAttachment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "Tickets", new {id = ticketAttachment.TicketId});
+                return RedirectToAction("Details", "Tickets", new { id = ticketAttachment.TicketId });
             }
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketAttachment.TicketId);
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.UserId);
