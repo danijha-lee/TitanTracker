@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TitanTracker.Data;
 using TitanTracker.Models;
+using TitanTracker.Services.Interfaces;
 
 namespace TitanTracker.Controllers
 {
     public class NotificationsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTNotificationService _notificationService;
 
-        public NotificationsController(ApplicationDbContext context)
+        public NotificationsController(ApplicationDbContext context, IBTNotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         // GET: Notifications
@@ -39,10 +42,13 @@ namespace TitanTracker.Controllers
                 .Include(n => n.Sender)
                 .Include(n => n.Ticket)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (notification == null)
             {
                 return NotFound();
             }
+
+            await _notificationService.ViewNotificationAsync(notification);
 
             return View(notification);
         }

@@ -1,32 +1,35 @@
-﻿@model TitanTracker.Models.ViewModels.ProjectMembersViewModel
+﻿@model TitanTracker.Models.ViewModels.AddProjectWithPMViewModel
 <div class="container">
-    <h2> Assign Users </h2>
+    <h2> Choose a project manager to assign</h2>
 
     <div class="row">
         <div class="col-md-4">
             <div class="panel panel-green margin-bottom-40">
                 <div class="panel-heading">
                     <h3 class="panel-title"> @Model.Project.Name</h3>
+                    
                 </div>
             </div>
             <p>
                 Name :
                 <span>@Model.Project.Name</span>
+                Description:
+                <h3 class="panel-title"> @Model.Project.Description</h3>
             </p>
 
-            <form asp-action="AssignUsers" asp-controller="Projects" method="post">
+            <form asp-action="AddPM" asp-controller="Projects" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="@Model.Project.Id">
                 <input type="hidden" asp-for="@Model.Project.Name">
                 <div class="col-12">
                     <div class="form-group">
-                        <label asp-for="@Model.Users" class="control-label">Assign team members for Project: @Model.Project.Name</label>
-                        <select asp-for="@Model.SelectedUsers" class="form-control" asp-items="@Model.Users" multiple="multiple"></select>
+                        <label asp-for="@Model.PMList" class="control-label">Assign team members for Project: @Model.Project.Name</label>
+                        <select asp-for="@Model.SelectedUsers" class="form-control" asp-items="@Model.PMList">Choose Project Manager...</select>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-lg-offset-2 col-lg-10">
-                        <input type="submit" class="btn btn-success" value="Assign Users" />
+                        <button type="submit" class="mr-2 btn btn-primary success" value="Assign Users">Assign User</button>
                     </div>
                 </div>
             </form>
@@ -38,12 +41,17 @@
     </div>
 </div>
 
-@section scripts{
-    <script>
-    </script>
-}
+
 
 @section scripts{
     <script>
+        $('.widget-content .success').on('click', function () {
+            swal({
+                title: 'Project Updated',
+                text: "Project Manager Successfully Update",
+                type: 'success',
+                padding: '2em'
+            })
+        })
     </script>
 }

@@ -10,6 +10,8 @@ namespace TitanTracker.Services.Interfaces
     {
         public Task AddNotificationAsync(Notification notification);
 
+        public Task<bool> AddAdminNotificationAsync(Notification notification, int companyId);
+
         public Task<List<Notification>> GetReceivedNotificationsAsync(string userId);
 
         public Task<List<Notification>> GetSentNotificationsAsync(string userId);
@@ -19,5 +21,7 @@ namespace TitanTracker.Services.Interfaces
         public Task SendMembersEmailNotificationsAsync(Notification notification, List<BTUser> members);
 
         public Task<bool> SendEmailNotificationAsync(Notification notification, string emailSubject);
+
+        public Task ViewNotificationAsync(Notification notification);
     }
 }

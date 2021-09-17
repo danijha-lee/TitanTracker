@@ -23,24 +23,38 @@ namespace TitanTracker.Controllers
         private readonly IBTProjectService _projectService;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTTicketHistoryService _ticketHistoryService;
+        private readonly IBTNotificationService _notificationService;
 
         public TicketsController(ApplicationDbContext context, IBTTicketService ticketService,
                                                                IBTProjectService projectService,
                                                                 UserManager<BTUser> userManager,
-                                                                IBTTicketHistoryService ticketHistoryService)
+                                                                IBTTicketHistoryService ticketHistoryService,
+                                                                IBTNotificationService notificationService)
         {
             _context = context;
             _ticketService = ticketService;
             _projectService = projectService;
             _userManager = userManager;
             _ticketHistoryService = ticketHistoryService;
+            _notificationService = notificationService;
         }
 
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            return View(await applicationDbContext.ToListAsync());
+            int companyId = User.Identity.GetCompanyId().Value;
+            List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+            return View(tickets);
+        }
+
+        //ACTION FOR CURRENT USERS TICKETS
+        public async Task<IActionResult> AllTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+            BTUser user = await _userManager.GetUserAsync(User);
+            List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(user.Id, companyId);
+
+            return View(tickets);
         }
 
         // GET: Tickets/Details/5
@@ -109,11 +123,72 @@ namespace TitanTracker.Controllers
                 await _ticketService.AddNewTicketAsync(ticket);
 
                 Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+
                 await _ticketHistoryService.AddHistoryAsync(null, newTicket, btUser.Id);
+
+                BTUser Pm = await _projectService.GetProjectManagerAsync(ticket.ProjectId);
+                int companyId = User.Identity.GetCompanyId().Value;
+
+                List<BTUser> developers = await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, Roles.Developer.ToString());
+                List<BTUser> submitters = await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, Roles.Submitter.ToString());
+
+                Notification notification = new()
+                {
+                    Title = "New Ticket Created",
+                    Message = $" A New Ticket: {ticket.Title}, Was Created By {btUser.FullName} for the project: {ticket.Project.Name}.",
+                    Created = DateTimeOffset.Now,
+                    TicketId = ticket.Id,
+                    RecipientId = Pm?.Id,
+                    SenderId = btUser.Id
+                };
+
+                if (Pm != null)
+                {
+                    await _notificationService.AddNotificationAsync(notification);
+                    await _notificationService.SendEmailNotificationAsync(notification, "New ticket added.");
+                }
+                else
+                {
+                    //notification.RecipientId = admin.Id;
+                    await _notificationService.AddAdminNotificationAsync(notification, companyId);
+                    await _notificationService.SendEmailNotificationsByRoleAsync(notification, companyId, Roles.Admin.ToString());
+                }
+
+                foreach (BTUser developer in developers)
+                {
+                    Notification developerNotification = new()
+                    {
+                        Title = "New Ticket Created",
+                        Message = $" A New Ticket: {ticket.Title}, Was Created By {btUser.FullName} for the project: {ticket.Project.Name}.",
+                        Created = DateTimeOffset.Now,
+                        TicketId = ticket.Id,
+                        RecipientId = developer?.Id,
+                        SenderId = btUser.Id
+                    };
+
+                    await _notificationService.AddNotificationAsync(developerNotification);
+                    await _notificationService.SendEmailNotificationAsync(developerNotification, "New ticket added.");
+                }
+
+                foreach (BTUser submitter in submitters)
+                {
+                    Notification submitterNotification = new()
+                    {
+                        Title = "New Ticket Created",
+                        Message = $" A New Ticket: {ticket.Title}, Was Created By {btUser.FullName} for the project: {ticket.Project.Name}.",
+                        Created = DateTimeOffset.Now,
+                        TicketId = ticket.Id,
+                        RecipientId = submitter?.Id,
+                        SenderId = btUser.Id
+                    };
+
+                    await _notificationService.AddNotificationAsync(submitterNotification);
+                    await _notificationService.SendEmailNotificationAsync(submitterNotification, "New ticket added.");
+                }
 
                 //_context.Add(ticket);
                 //await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Projects", new { id = ticket.ProjectId });
             }
             //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperUserId);
             //ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnerUserId);
@@ -162,12 +237,71 @@ namespace TitanTracker.Controllers
                 try
                 {
                     BTUser btUser = await _userManager.GetUserAsync(User);
+                    int companyId = User.Identity.GetCompanyId().Value;
+
                     Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     ticket.Updated = DateTimeOffset.Now;
                     await _ticketService.UpdateTicketAsync(ticket);
 
                     Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     await _ticketHistoryService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
+
+                    BTUser Pm = await _projectService.GetProjectManagerAsync(ticket.ProjectId);
+                    //BTUser admin = (await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, Roles.Admin.ToString())).FirstOrDefault();
+                    List<BTUser> developers = await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, Roles.Developer.ToString());
+                    List<BTUser> submitters = await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, Roles.Submitter.ToString());
+
+                    Notification notification = new()
+                    {
+                        Title = "Ticket Update",
+                        Message = $" The Ticket: {ticket.Title}, Was Updated By {btUser.FullName} to the project: {ticket.Project.Name}.",
+                        Created = DateTimeOffset.Now,
+                        TicketId = ticket.Id,
+                        RecipientId = Pm?.Id,
+                        SenderId = btUser.Id
+                    };
+
+                    if (Pm != null)
+                    {
+                        await _notificationService.AddNotificationAsync(notification);
+                        await _notificationService.SendEmailNotificationAsync(notification, "A Ticket Was Updated");
+                    }
+                    else
+                    {
+                        // notification.RecipientId = admin.Id;
+                        await _notificationService.AddAdminNotificationAsync(notification, companyId);
+                        await _notificationService.SendEmailNotificationsByRoleAsync(notification, companyId, Roles.Admin.ToString());
+                    }
+                    foreach (BTUser developer in developers)
+                    {
+                        Notification developerNotification = new()
+                        {
+                            Title = "Ticket Update",
+                            Message = $" The Ticket: {ticket.Title}, Was Updated By {btUser.FullName} to the project: {ticket.Project.Name}.",
+                            Created = DateTimeOffset.Now,
+                            TicketId = ticket.Id,
+                            RecipientId = developer?.Id,
+                            SenderId = btUser.Id
+                        };
+                        notification.RecipientId = developer.Id;
+                        await _notificationService.AddNotificationAsync(notification);
+                        await _notificationService.SendEmailNotificationAsync(developerNotification, "New ticket added.");
+                    }
+                    foreach (BTUser submitter in submitters)
+                    {
+                        Notification submitterNotification = new()
+                        {
+                            Title = "Ticket Update",
+                            Message = $" The Ticket: {ticket.Title}, Was Updated By {btUser.FullName} to the project: {ticket.Project.Name}.",
+                            Created = DateTimeOffset.Now,
+                            TicketId = ticket.Id,
+                            RecipientId = submitter?.Id,
+                            SenderId = btUser.Id
+                        };
+                        notification.RecipientId = submitter.Id;
+                        await _notificationService.AddNotificationAsync(notification);
+                        await _notificationService.SendEmailNotificationAsync(notification, "New ticket added.");
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -182,11 +316,9 @@ namespace TitanTracker.Controllers
                 }
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperUserId);
-            ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnerUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Id", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Id", ticket.TicketTypeId);
+            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
+            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
 

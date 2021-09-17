@@ -28,7 +28,10 @@ namespace TitanTracker.Models
         public bool Viewed { get; set; }
 
         [DisplayName("Ticket")]
-        public int TicketId { get; set; }
+        public int? TicketId { get; set; }
+
+        [DisplayName("Project")]
+        public int? ProjectId { get; set; }
 
         [Required]
         [DisplayName("Recipient")]
@@ -43,5 +46,7 @@ namespace TitanTracker.Models
         public virtual Ticket Ticket { get; set; }
         public virtual BTUser Recipient { get; set; }
         public virtual BTUser Sender { get; set; }
+
+        public virtual Project Project { get; set; }
     }
 }

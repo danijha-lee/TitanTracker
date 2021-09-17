@@ -24,13 +24,17 @@ namespace TitanTracker.Controllers
         private readonly IBTProjectService _projectService;
         private readonly IBTFileService _fileService;
         private readonly UserManager<BTUser> _userManager;
+        private readonly IBTNotificationService _notificationService;
+        private readonly IBTTicketService _ticketService;
 
         public ProjectsController(ApplicationDbContext context,
                                   IBTCompanyInfoService companyInfoService,
                                   IBTRolesService rolesService,
                                   IBTProjectService projectService,
                                   IBTFileService fileService,
-                                  UserManager<BTUser> userManager)
+                                  UserManager<BTUser> userManager,
+                                  IBTNotificationService notificationService,
+                                  IBTTicketService ticketService)
         {
             _context = context;
             _companyInfoService = companyInfoService;
@@ -38,9 +42,12 @@ namespace TitanTracker.Controllers
             _projectService = projectService;
             _fileService = fileService;
             _userManager = userManager;
+            _notificationService = notificationService;
+            _ticketService = ticketService;
         }
 
         // GET: Projects
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -48,10 +55,29 @@ namespace TitanTracker.Controllers
             return View(projects);
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> AddPM(int id)
-        //{
-        //}
+        [HttpGet]
+        public async Task<IActionResult> AddPM(int id)
+        {
+            AddProjectWithPMViewModel model = new();
+            int companyId = User.Identity.GetCompanyId().Value;
+            model.Project = await _projectService.GetProjectByIdAsync(id, companyId);
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName");
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddPM(AddProjectWithPMViewModel model, int projectId)
+        {
+            if (ModelState.IsValid)
+            {
+                if (model.PmId != null)
+                {
+                    await _projectService.AddProjectManagerAsync(model.PmId, projectId);
+                }
+            }
+            return RedirectToAction("Index");
+        }
 
         [HttpGet]
         public async Task<IActionResult> AssignMembers(int id)
@@ -96,11 +122,28 @@ namespace TitanTracker.Controllers
                     {
                         await _projectService.AddUserToProjectAsync(item, model.Project.Id);
                     }
-                    //goto project details
-                    //return RedirectToAction("Details", "Projects", new {id = model.Project.Id });
+
+                    BTUser btUser = await _userManager.GetUserAsync(User);
+                    List<BTUser> developers = await _projectService.GetProjectMembersByRoleAsync(model.Project.Id, Roles.Developer.ToString());
+
+                    List<BTUser> submitters = await _projectService.GetProjectMembersByRoleAsync(model.Project.Id, Roles.Submitter.ToString());
+                    BTUser projectManager = await _projectService.GetProjectManagerAsync(model.Project.Id);
+
+                    Notification notification = new()
+                    {
+                        Title = $"{btUser.FullName} has Added you to a Project",
+                        Message = $" You have been added to the Project: {model.Project.Name} by {btUser.FullName}.",
+                        Created = DateTimeOffset.Now,
+                        ProjectId = model.Project.Id,
+                        RecipientId = projectManager?.Id,
+                        SenderId = btUser.Id
+                    };
                 }
             }
-            return RedirectToAction("AssignMembers", new { id = model.Project.Id });
+            //return RedirectToAction("AssignMembers", new { id = model.Project.Id });
+
+            //goto project details
+            return RedirectToAction("Details", "Projects", new { id = model.Project.Id });
         }
 
         // GET: Projects/Details/5
@@ -124,12 +167,14 @@ namespace TitanTracker.Controllers
         }
 
         // GET: Projects/Create
-        [Authorize(Roles = "Admin, ProjectManager")]
+        [Authorize(Roles = "Admin,ProjectManager")]
         public async Task<IActionResult> Create()
         {
             int companyId = User.Identity.GetCompanyId().Value;
 
+            //Add ViewModel instance "AddProjectWithPmViewModel"
             AddProjectWithPMViewModel model = new();
+            //Load SelectLists with data ie. PmList & PriorityList
             model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName");
             model.PriorityList = new SelectList(_context.ProjectPriorities, "Id", "Name");
 
@@ -164,6 +209,34 @@ namespace TitanTracker.Controllers
                     if (!string.IsNullOrEmpty(model.PmId))
                     {
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
+
+                        BTUser btUser = await _userManager.GetUserAsync(User);
+                        int companyId = User.Identity.GetCompanyId().Value;
+                        int projectId = model.Project.Id;
+                        BTUser Pm = await _projectService.GetProjectManagerAsync(projectId);
+
+                        //SEND PM NOTIFICATION HERE ----------------->
+
+                        Notification notification = new()
+                        {
+                            Title = $"{btUser.FullName} has Added you to a Project",
+                            Message = $" You have been added to the Project: {model.Project.Name} by {btUser.FullName}.  ",
+                            Created = DateTimeOffset.Now,
+                            ProjectId = model.Project.Id,
+                            RecipientId = Pm?.Id,
+                            SenderId = btUser.Id
+                        };
+                        if (Pm != null)
+                        {
+                            await _notificationService.AddNotificationAsync(notification);
+                            await _notificationService.SendEmailNotificationAsync(notification, "New Project Added");
+                        }
+                        else
+                        {
+                            //notification.RecipientId = admin.Id;
+                            await _notificationService.AddAdminNotificationAsync(notification, companyId);
+                            await _notificationService.SendEmailNotificationsByRoleAsync(notification, companyId, Roles.Admin.ToString());
+                        }
                     }
                 }
                 catch (Exception)
@@ -179,8 +252,8 @@ namespace TitanTracker.Controllers
         //Get: Projects/MyProjects
         public async Task<IActionResult> MyProjects()
         {
-            string userId = _userManager.GetUserId(User);
-            List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
+            BTUser userId = await _userManager.GetUserAsync(User);
+            List<Project> projects = await _projectService.GetUserProjectsAsync(userId.Id);
             return View(projects);
         }
 
@@ -227,6 +300,8 @@ namespace TitanTracker.Controllers
                     }
 
                     await _projectService.UpdateProjectAsync(project);
+
+                    //-------START NOTIFICATION SERVICE HERE-------------->
                 }
                 catch (DbUpdateConcurrencyException)
                 {

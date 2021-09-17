@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -40,6 +41,7 @@ namespace TitanTracker.Controllers
         }
 
         // GET: Invites
+       
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Invites.Include(i => i.Company).Include(i => i.Project);

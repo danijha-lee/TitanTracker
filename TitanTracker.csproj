@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Identity\Pages\Account\Login - Copy.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Areas\Identity\Pages\Account\Login - Copy.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Services\BTRolesService.cs" />
     <Content Include="Services\Interfaces\IBTRolesService.cs" />
   </ItemGroup>

@@ -232,20 +232,19 @@ namespace TitanTracker.Services
         public async Task<Ticket> GetTicketAsNoTrackingAsync(int ticketId)
         {
             Ticket ticket = await _context.Tickets
-
-                                                         .Include(t => t.Attachments)
-                                                          .ThenInclude(t => t.User)
-                                                            .Include(t => t.Comments)
-                                                         .ThenInclude(t => t.User)
-                                                          .Include(t => t.DeveloperUser)
-                                                           .Include(t => t.History)
-                                                            .ThenInclude(t => t.User)
-                                                            .Include(t => t.OwnerUser)
-                                                             .Include(t => t.TicketPriority)
-                                                              .Include(t => t.TicketStatus)
-                                                               .Include(t => t.TicketType)
-                                                                .Include(t => t.Project)
-                                                               .AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticketId);
+                                          .Include(t => t.Attachments)
+                                              .ThenInclude(t => t.User)
+                                          .Include(t => t.Comments)
+                                              .ThenInclude(t => t.User)
+                                          .Include(t => t.History)
+                                              .ThenInclude(t => t.User)
+                                          .Include(t => t.DeveloperUser)
+                                          .Include(t => t.OwnerUser)
+                                          .Include(t => t.TicketPriority)
+                                          .Include(t => t.TicketStatus)
+                                          .Include(t => t.TicketType)
+                                          .Include(t => t.Project)
+                                          .AsNoTracking().FirstOrDefaultAsync(t => t.Id == ticketId);
 
             return ticket;
         }

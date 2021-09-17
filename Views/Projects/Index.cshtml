@@ -3,11 +3,16 @@
 @{
     ViewData["Title"] = "Index";
 }
+<!-- BEGIN PAGE LEVEL CUSTOM STYLES -->
+<link href="assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="assets/css/forms/theme-checkbox-radio.css">
+<link href="assets/css/tables/table-basic.css" rel="stylesheet" type="text/css" />
+<!-- END PAGE LEVEL CUSTOM STYLES -->
 
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create"><button class="btn btn-secondary">Create New</button></a>
 </p>
 <table class="table">
     <thead>
@@ -24,52 +29,72 @@
             <th>
                 @Html.DisplayNameFor(model => model.EndDate)
             </th>
-           
+
             <th>
                 @Html.DisplayNameFor(model => model.Archived)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
-            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.ProjectPriority)
             </th>
-            <th></th>
+            <th>
+                ACTION
+            </th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate@*.ToString("MM/dd/yyyy")*@)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndDate)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Archived)
+            </td>
+
+            <td>
+                <span class="badge badge-success">  @Html.DisplayFor(modelItem => item.ProjectPriority.Name)</span>
+            </td>
+           
+
+
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    <div class="dropdown custom-dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <strong>...</strong>  <svg>  </svg>
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink2">
+                            <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                            <a class="dropdown-item" asp-action="AssignMembers" asp-route-id="@item.Id">Assign Members</a>
+                            <a class="dropdown-item" asp-action="AddPM" asp-route-id="@item.Id">Assign Project Manager</a>
+                        </div>
+                    </div>
+                    @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="AssignMembers" asp-route-id="@item.Id">Assign Members</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
                 </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
-               
-                <td>
-                    @Html.DisplayFor(modelItem => item.Archived)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Company.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="AssignMembers" asp-route-id="@item.Id">Assign Members</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
+        </tr>
         }
     </tbody>
 </table>
+<!-- BEGIN PAGE LEVEL CUSTOM SCRIPTS -->
+<script src="assets/js/scrollspyNav.js"></script>
+<script>
+    checkall('todoAll', 'todochkbox');
+    $('[data-toggle="tooltip"]').tooltip()
+</script>
+<!-- END PAGE LEVEL CUSTOM SCRIPTS -->

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TitanTracker.Data;
 using TitanTracker.Models;
+using TitanTracker.Models.Enums;
 using TitanTracker.Services.Interfaces;
 
 namespace TitanTracker.Services
@@ -25,8 +26,36 @@ namespace TitanTracker.Services
 
         public async Task AddNotificationAsync(Notification notification)
         {
-            await _context.AddAsync(notification);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.AddAsync(notification);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> AddAdminNotificationAsync(Notification notification, int companyId)
+        {
+            try
+            {
+                BTUser admin = (await _rolesService.GetUsersInRoleAsync(Roles.Admin.ToString(), companyId)).FirstOrDefault();
+
+                if (admin != null)
+                {
+                    notification.RecipientId = admin.Id;
+                    await _context.AddAsync(notification);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else { return false; }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<List<Notification>> GetReceivedNotificationsAsync(string userId)
@@ -36,6 +65,7 @@ namespace TitanTracker.Services
                 List<Notification> notifications = await _context.Notifications
                                                             .Include(n => n.Recipient)
                                                             .Include(n => n.Sender)
+
                                                             .Include(n => n.Ticket)
                                                              .ThenInclude(t => t.Project)
                                                             .Where(n => n.RecipientId == userId).ToListAsync();
@@ -119,6 +149,20 @@ namespace TitanTracker.Services
                     notification.RecipientId = btUser.Id;
                     await SendEmailNotificationAsync(notification, notification.Title);
                 }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task ViewNotificationAsync(Notification notification)
+        {
+            try
+            {
+                notification.Viewed = true;
+                _context.Update(notification);
+                await _context.SaveChangesAsync();
             }
             catch (Exception)
             {

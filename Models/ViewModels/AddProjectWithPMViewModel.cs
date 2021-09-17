@@ -13,5 +13,7 @@ namespace TitanTracker.Models.ViewModels
         public string PmId { get; set; }
         public SelectList PriorityList { get; set; }
         public int ProjectPriority { get; set; }
+
+        public List<string> SelectedUsers { get; set; } //recieves list of users ??
     }
 }
