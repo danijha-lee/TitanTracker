@@ -123,6 +123,7 @@ namespace TitanTracker.Controllers
                         await _projectService.AddUserToProjectAsync(item, model.Project.Id);
                     }
 
+                    int companyId = User.Identity.GetCompanyId().Value;
                     BTUser btUser = await _userManager.GetUserAsync(User);
                     List<BTUser> developers = await _projectService.GetProjectMembersByRoleAsync(model.Project.Id, Roles.Developer.ToString());
 
@@ -131,13 +132,56 @@ namespace TitanTracker.Controllers
 
                     Notification notification = new()
                     {
-                        Title = $"{btUser.FullName} has Added you to a Project",
-                        Message = $" You have been added to the Project: {model.Project.Name} by {btUser.FullName}.",
+                        Title = $"{btUser.FullName} has added a new member to a Project",
+                        Message = $" A new member has been added to the Project: {model.Project.Name} by {btUser.FullName}.",
                         Created = DateTimeOffset.Now,
                         ProjectId = model.Project.Id,
                         RecipientId = projectManager?.Id,
                         SenderId = btUser.Id
                     };
+                    if (projectManager != null)
+                    {
+                        await _notificationService.AddNotificationAsync(notification);
+                        await _notificationService.SendEmailNotificationAsync(notification, "New member has been added to a project");
+                    }
+                    else
+                    {
+                        //notification.RecipientId = admin.Id;
+                        await _notificationService.AddAdminNotificationAsync(notification, companyId);
+                        await _notificationService.SendEmailNotificationsByRoleAsync(notification, companyId, Roles.Admin.ToString());
+                    }
+
+                    foreach (BTUser developer in developers)
+                    {
+                        Notification developerNotification = new()
+                        {
+                            Title = $"{btUser.FullName} has Added you to a Project",
+                            Message = $"You have been added to the Project: {model.Project.Name}.",
+                            Created = DateTimeOffset.Now,
+                            ProjectId = model.Project.Id,
+                            RecipientId = developer?.Id,
+                            SenderId = btUser.Id
+                        };
+
+                        await _notificationService.AddNotificationAsync(developerNotification);
+                        await _notificationService.SendEmailNotificationAsync(developerNotification, "New Project Assignment");
+                    }
+
+                    foreach (BTUser submitter in submitters)
+                    {
+                        Notification submitterNotification = new()
+                        {
+                            Title = $"{btUser.FullName} has Added you to a Project",
+                            Message = $"You have been added to the Project: {model.Project.Name}.",
+                            Created = DateTimeOffset.Now,
+                            ProjectId = model.Project.Id,
+                            RecipientId = submitter?.Id,
+                            SenderId = btUser.Id
+                        };
+
+                        await _notificationService.AddNotificationAsync(submitterNotification);
+                        await _notificationService.SendEmailNotificationAsync(submitterNotification, "New Project Assignment");
+                    }
                 }
             }
             //return RedirectToAction("AssignMembers", new { id = model.Project.Id });
@@ -302,6 +346,66 @@ namespace TitanTracker.Controllers
                     await _projectService.UpdateProjectAsync(project);
 
                     //-------START NOTIFICATION SERVICE HERE-------------->
+
+                    int companyId = User.Identity.GetCompanyId().Value;
+                    BTUser btUser = await _userManager.GetUserAsync(User);
+                    List<BTUser> developers = await _projectService.GetProjectMembersByRoleAsync(project.Id, Roles.Developer.ToString());
+
+                    List<BTUser> submitters = await _projectService.GetProjectMembersByRoleAsync(project.Id, Roles.Submitter.ToString());
+                    BTUser projectManager = await _projectService.GetProjectManagerAsync(project.Id);
+
+                    Notification notification = new()
+                    {
+                        Title = $"{btUser.FullName} has modified a project that you are apart of  ",
+                        Message = $" The Project: {project.Name} has been revised by {btUser.FullName}.",
+                        Created = DateTimeOffset.Now,
+                        ProjectId = project.Id,
+                        RecipientId = projectManager?.Id,
+                        SenderId = btUser.Id
+                    };
+                    if (projectManager != null)
+                    {
+                        await _notificationService.AddNotificationAsync(notification);
+                        await _notificationService.SendEmailNotificationAsync(notification, "A Project has been modified");
+                    }
+                    else
+                    {
+                        //notification.RecipientId = admin.Id;
+                        await _notificationService.AddAdminNotificationAsync(notification, companyId);
+                        await _notificationService.SendEmailNotificationsByRoleAsync(notification, companyId, Roles.Admin.ToString());
+                    }
+
+                    foreach (BTUser developer in developers)
+                    {
+                        Notification developerNotification = new()
+                        {
+                            Title = $"{btUser.FullName} has modified a project that you are apart of  ",
+                            Message = $" The Project: {project.Name} has been revised by {btUser.FullName}.",
+                            Created = DateTimeOffset.Now,
+                            ProjectId = project.Id,
+                            RecipientId = developer?.Id,
+                            SenderId = btUser.Id
+                        };
+
+                        await _notificationService.AddNotificationAsync(developerNotification);
+                        await _notificationService.SendEmailNotificationAsync(developerNotification, "A Project has been modified");
+                    }
+
+                    foreach (BTUser submitter in submitters)
+                    {
+                        Notification submitterNotification = new()
+                        {
+                            Title = $"{btUser.FullName} has modified a project that you are apart of  ",
+                            Message = $" The Project: {project.Name} has been revised by {btUser.FullName}.",
+                            Created = DateTimeOffset.Now,
+                            ProjectId = project.Id,
+                            RecipientId = submitter?.Id,
+                            SenderId = btUser.Id
+                        };
+
+                        await _notificationService.AddNotificationAsync(submitterNotification);
+                        await _notificationService.SendEmailNotificationAsync(submitterNotification, "A Project has been modified");
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {

@@ -24,12 +24,14 @@ namespace TitanTracker.Controllers
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTTicketHistoryService _ticketHistoryService;
         private readonly IBTNotificationService _notificationService;
+        private readonly IBTCompanyInfoService _companyInfoService;
 
         public TicketsController(ApplicationDbContext context, IBTTicketService ticketService,
                                                                IBTProjectService projectService,
                                                                 UserManager<BTUser> userManager,
                                                                 IBTTicketHistoryService ticketHistoryService,
-                                                                IBTNotificationService notificationService)
+                                                                IBTNotificationService notificationService,
+                                                                IBTCompanyInfoService companyInfoService)
         {
             _context = context;
             _ticketService = ticketService;
@@ -37,6 +39,7 @@ namespace TitanTracker.Controllers
             _userManager = userManager;
             _ticketHistoryService = ticketHistoryService;
             _notificationService = notificationService;
+            _companyInfoService = companyInfoService;
         }
 
         // GET: Tickets
@@ -238,6 +241,7 @@ namespace TitanTracker.Controllers
                 {
                     BTUser btUser = await _userManager.GetUserAsync(User);
                     int companyId = User.Identity.GetCompanyId().Value;
+                    //int projectId = ticket.Project.Id;
 
                     Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     ticket.Updated = DateTimeOffset.Now;
@@ -245,6 +249,7 @@ namespace TitanTracker.Controllers
 
                     Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     await _ticketHistoryService.AddHistoryAsync(oldTicket, newTicket, btUser.Id);
+                    //await _ticketHistoryService.GetProjectTicketsHistoriesAsync(projectId, companyId);
 
                     BTUser Pm = await _projectService.GetProjectManagerAsync(ticket.ProjectId);
                     //BTUser admin = (await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, Roles.Admin.ToString())).FirstOrDefault();
@@ -254,7 +259,7 @@ namespace TitanTracker.Controllers
                     Notification notification = new()
                     {
                         Title = "Ticket Update",
-                        Message = $" The Ticket: {ticket.Title}, Was Updated By {btUser.FullName} to the project: {ticket.Project.Name}.",
+                        Message = $" The Ticket: {ticket.Title}, Was Updated By {btUser.FullName} for the project: {ticket.Project.Name}.",
                         Created = DateTimeOffset.Now,
                         TicketId = ticket.Id,
                         RecipientId = Pm?.Id,
@@ -277,7 +282,7 @@ namespace TitanTracker.Controllers
                         Notification developerNotification = new()
                         {
                             Title = "Ticket Update",
-                            Message = $" The Ticket: {ticket.Title}, Was Updated By {btUser.FullName} to the project: {ticket.Project.Name}.",
+                            Message = $" The Ticket: {ticket.Title}, Was Updated By {btUser.FullName} for the project: {ticket.Project.Name}.",
                             Created = DateTimeOffset.Now,
                             TicketId = ticket.Id,
                             RecipientId = developer?.Id,
@@ -292,7 +297,7 @@ namespace TitanTracker.Controllers
                         Notification submitterNotification = new()
                         {
                             Title = "Ticket Update",
-                            Message = $" The Ticket: {ticket.Title}, Was Updated By {btUser.FullName} to the project: {ticket.Project.Name}.",
+                            Message = $" The Ticket: {ticket.Title}, Was Updated By {btUser.FullName} for the project: {ticket.Project.Name}.",
                             Created = DateTimeOffset.Now,
                             TicketId = ticket.Id,
                             RecipientId = submitter?.Id,

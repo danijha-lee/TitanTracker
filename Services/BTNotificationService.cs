@@ -169,5 +169,33 @@ namespace TitanTracker.Services
                 throw;
             }
         }
+
+        public async Task ArchiveNotificationAsync(Notification notification)
+        {
+            try
+            {
+                notification.Archived = true;
+                _context.Update(notification);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task MarkAsImportantAsync(Notification notification)
+        {
+            try
+            {
+                notification.Important = true;
+                _context.Update(notification);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

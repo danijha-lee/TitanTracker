@@ -23,5 +23,9 @@ namespace TitanTracker.Services.Interfaces
         public Task<bool> SendEmailNotificationAsync(Notification notification, string emailSubject);
 
         public Task ViewNotificationAsync(Notification notification);
+
+        public Task ArchiveNotificationAsync(Notification notification);
+
+        public Task MarkAsImportantAsync(Notification notification);
     }
 }

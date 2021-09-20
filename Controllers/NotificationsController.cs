@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TitanTracker.Data;
+using TitanTracker.Extensions;
 using TitanTracker.Models;
+using TitanTracker.Models.ViewModels;
 using TitanTracker.Services.Interfaces;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TitanTracker.Controllers
 {
@@ -15,16 +19,57 @@ namespace TitanTracker.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IBTNotificationService _notificationService;
+        private readonly UserManager<BTUser> _userManager;
+        private readonly IBTCompanyInfoService _companyInfoService;
+        private readonly IBTRolesService _rolesService;
 
-        public NotificationsController(ApplicationDbContext context, IBTNotificationService notificationService)
+        public NotificationsController(ApplicationDbContext context,
+            IBTNotificationService notificationService,
+            UserManager<BTUser> userManager,
+            IBTCompanyInfoService companyInfoService,
+            IBTRolesService rolesService)
         {
             _context = context;
             _notificationService = notificationService;
+            _userManager = userManager;
+            _companyInfoService = companyInfoService;
+            _rolesService = rolesService;
+        }
+
+        public async Task<IActionResult> SentMail()
+        {
+            string userId = _userManager.GetUserId(User);
+            List<Notification> notifications = await _notificationService.GetSentNotificationsAsync(userId);
+
+            return View(notifications);
+        }
+
+        public async Task<IActionResult> ImportantMail()
+        {
+            string userId = _userManager.GetUserId(User);
+            List<Notification> notifications = await _notificationService.GetReceivedNotificationsAsync(userId);
+            List<Notification> importantNotifications = (List<Notification>)notifications.Where(n => n.Important == true);
+
+            return View(importantNotifications);
+        }
+
+        public async Task<IActionResult> ArchivedMail()
+        {
+            string userId = _userManager.GetUserId(User);
+            List<Notification> notifications = await _notificationService.GetReceivedNotificationsAsync(userId);
+
+            List<Notification> archivedNotifications = (List<Notification>)notifications.Where(n => n.Archived == true);
+
+            return View(archivedNotifications);
         }
 
         // GET: Notifications
         public async Task<IActionResult> Index()
         {
+            //ManageUserRolesViewModel viewModel = new();
+            //viewModel.BTUser = user;
+
+            //viewModel.Roles = new MultiSelectList(await _rolesService.GetRolesAsync(), "Name", "Name", selectedRoles);
             var applicationDbContext = _context.Notifications.Include(n => n.Recipient).Include(n => n.Sender).Include(n => n.Ticket);
             return View(await applicationDbContext.ToListAsync());
         }
