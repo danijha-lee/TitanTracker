@@ -36,6 +36,8 @@
     <link href="~/plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">
     <link href="~/assets/css/dashboard/dash_1.css" rel="stylesheet" type="text/css" />
     <link href="~/assets/css/dashboard/dash_2.css" rel="stylesheet" type="text/css" />
+
+    <link href="~/css/site.css" rel="stylesheet" />
     <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
 </head>
 <body>
@@ -228,27 +230,14 @@
                         <nav class="breadcrumb-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <a asp-action="Dashboard" asp-controller="Home">
-                                <li class="breadcrumb-item">Dashboard</li></a>
+                                <li class="breadcrumb-item">Dashboard</li>
+                                </a>
                             </ol>
                         </nav>
                     </div>
                 </li>
             </ul>
-            @*<ul class="navbar-nav flex-row ml-auto ">
-                    <li class="nav-item more-dropdown">
-                        <div class="dropdown  custom-dropdown-icon">
-                            <a class="dropdown-toggle btn" href="#" role="button" id="customDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Settings</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></a>
-
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="customDropdown">
-                                <a class="dropdown-item" data-value="Settings" href="javascript:void(0);">Settings</a>
-                                <a class="dropdown-item" data-value="Mail" href="javascript:void(0);">Mail</a>
-                                <a class="dropdown-item" data-value="Print" href="javascript:void(0);">Print</a>
-                                <a class="dropdown-item" data-value="Download" href="javascript:void(0);">Download</a>
-                                <a class="dropdown-item" data-value="Share" href="javascript:void(0);">Share</a>
-                            </div>
-                        </div>
-                    </li>
-                </ul>*@
+           
         </header>
     </div>
     <!--  END NAVBAR  -->
@@ -267,10 +256,10 @@
                 <ul class="list-unstyled menu-categories" id="accordionExample">
 
                     <li class="menu">
-                        <a href="#components" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <a asp-action="Dashboard" asp-controller="Home" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                                <span>Dashboard</span>
+                                Dashboard
                             </div>
                             <div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -279,7 +268,7 @@
                         <ul class="collapse submenu list-unstyled" id="components" data-parent="#accordionExample">
 
                             <li>
-                                <a asp-controller="Projects" asp-action="MyProjects">My Projects </a>
+                                <a asp-controller="Projects" asp-action="MyProjects">Company Dashboard </a>
                             </li>
                         </ul>
                     </li>
@@ -299,6 +288,7 @@
                             <li>
                                 <a asp-controller="Projects" asp-action="MyProjects">My Projects </a>
                             </li>
+                            
 
                             @*may create a foreach loop to display the most recent projects*@
                         </ul>
@@ -323,13 +313,9 @@
                             <li>
                                 <a asp-controller="Tickets" asp-action="Create"> Create New Ticket  </a>
                             </li>
-                            <li>
-                                <a asp-controller="Tickets" asp-action="Delete"> Delete A Ticket </a>
-                            </li>
+                           
 
-                            <li>
-                                <a asp-controller="TicketAttachments" asp-action="Index">Ticket Attachments</a>
-                            </li>
+                         
                         </ul>
                     </li>
                     @if (User.IsInRole("Admin"))
@@ -350,6 +336,9 @@
                                 </li>
                                 <li>
                                     <a asp-controller="Tickets" asp-action="Index"> All Tickets </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Tickets" asp-action="Edit"> Archive A Ticket </a>
                                 </li>
                                 <li>
                                     <a asp-controller="Projects" asp-action="Index"> All Projects </a>
