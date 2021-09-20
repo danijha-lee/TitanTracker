@@ -35,7 +35,7 @@ namespace TitanTracker
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(
-                    Configuration.GetConnectionString("DefaultConnection"),
+                   DataUtility.GetConnectionString(Configuration),
                     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
             services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -54,7 +54,7 @@ namespace TitanTracker
             services.AddScoped<IBTInviteService, BTInviteService>();
             services.AddScoped<IBTTicketHistoryService, BTTicketHistoryService>();
             services.AddScoped<IBTFileService, BTFileService>();
-           
+
             services.AddScoped<IEmailSender, BTEmailService>();
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             // End Custom Services
