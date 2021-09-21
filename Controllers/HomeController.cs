@@ -53,7 +53,7 @@ namespace TitanTracker.Controllers
             return View(model);
         }
 
-        public IActionResult Privacy()
+        public IActionResult CompanyDirectory()
         {
             return View();
         }

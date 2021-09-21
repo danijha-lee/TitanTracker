@@ -1,75 +1,254 @@
 ﻿@model IEnumerable<TitanTracker.Models.Project>
+@using TitanTracker.Services.Interfaces
+@using Microsoft.AspNetCore.Identity
+@using TitanTracker.Extensions
+@using TitanTracker.Models.Enums
+
+
+@inject UserManager<BTUser> UserManager
+@inject IBTProjectService ProjectService
+@inject IBTTicketHistoryService TicketHistoryService
+@inject IBTNotificationService NotificationService
+@inject IBTCompanyInfoService CompanyInfoService
+@inject IBTRolesService RolesService
+
 
 @{
     ViewData["Title"] = "Index";
+    BTUser user = await UserManager.GetUserAsync(User);
+    int companyId = User.Identity.GetCompanyId().Value;
+   List<IdentityRole>  role = await RolesService.GetRolesAsync();
 }
+<!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
+<link href="~/assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
+<link href="~/plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">
+<!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-           
-            <th>
-                @Html.DisplayNameFor(model => model.Archived)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProjectPriority)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.StartDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EndDate)
-                </td>
-               
-                <td>
-                    @Html.DisplayFor(modelItem => item.Archived)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Company.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProjectPriority.Id)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="AssignMembers" asp-route-id="@item.Id">Assign Members</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
+<div class="row layout-top-spacing">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-12 layout-spacing">
+        <div class="widget widget-content-area br-4">
+            <div class="widget-one">
+
+
+                @*<p class="mb-0 mt-3" style="color: #888ea8;">With CORK starter kit, you can begin your work without any hassle. The starter page is highly optimized which gives you freedom to start with minimal code and add only the desired components and plugins required for your project.</p>*@
+
+            </div>
+        </div>
+    </div>
+   
+    <div class="col-xl-4 col-lg-6 col-md-6 mb-4">
+        <div class="card b-l-card-1 h-100" style="-webkit-box-shadow: 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12), 0 3px 5px -1px rgba(0,0,0,.2); -moz-box-shadow: 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12), 0 3px 5px -1px rgba(0,0,0,.2); box-shadow: 0 6px 10px 0 rgba(0,0,0,.14), 0 1px 18px 0 rgba(0,0,0,.12), 0 3px 5px -1px rgba(0,0,0,.2); ">
+            <img class="card-img-top" src="~/assets/img/400x300.jpg" alt="Card image cap">
+            <div class="card-body">
+                @*<strong class="card-category">Trends</strong>*@
+                <h5 class="card-title mt-2">@user.FirstName's Projects</h5>
+                @*<p class="card-text meta-info meta-time mb-2">@role<small class=""></small></p>*@
+                <p class="card-text mb-4">Below is a list of all of the Projects You've Been assigned to.</p>
+                @*<button class="btn btn-outline-warning mt-2">Read More</button>*@
+            </div>
+        </div>
+    </div>
+    
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="col-xl-8 col-lg-6 col-md-6 col-sm-12 col-12" style="margin-bottom:24px;">
+            <div class="statbox widget box box-shadow">
+                <div class="widget-header">
+                    <div class="row">
+                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                            <h4>Add New Project</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-content widget-content-area" style="height: 571px;">
+
+                    <form>
+                        <div class="form-row mb-4">
+
+                            <div class="form-group col-md-6">
+                                <label>Project Name</label>
+                                <input type="text" class="form-control" id="inputPassword4">
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="inputAddress">Description</label>
+                            <textarea rows="5" class="form-control" placeholder="Tell a little about this project"></textarea>
+                        </div>
+
+                        <div class="form-row mb-4">
+                            <div class="form-group col-md-6">
+                                <label>Start Date</label>
+                                <input type="date" class="form-control" id="inputCity">
+                            </div>
+                            @*<div class="form-group col-md-4">
+                                    <label for="inputState">State</label>
+                                    <select id="inputState" class="form-control">
+                                        <option selected="">Choose...</option>
+                                        <option>...</option>
+                                    </select>
+                                </div>*@
+                            <div class="form-group col-md-6">
+                                <label for="inputZip">End Date</label>
+                                <input type="date" class="form-control" id="inputZip">
+                            </div>
+                        </div>
+                        @*<div class="form-group">
+                                <div class="form-check pl-0">
+                                    <div class="custom-control custom-checkbox checkbox-info">
+                                        <input type="checkbox" class="custom-control-input" id="gridCheck">
+                                        <label class="custom-control-label" for="gridCheck">Check me out</label>
+                                    </div>
+                                </div>
+                            </div>*@
+                        <button type="submit" class="btn btn-primary mt-3 ">Add Project</button>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+    }
+    @if (User.IsInRole("ProjectManager") || User.IsInRole("Developer") || User.IsInRole("Submitter"))
+    {
+
+        <div id="chartArea" class="col-xl-8 layout-spacing">
+            <div class="statbox widget box box-shadow">
+                <div class="widget-header">
+                    <div class="row">
+                        <div class="col-xl-8 col-md-6 col-sm-12 col-12">
+                            <h4>My Project Stats</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="widget-content widget-content-area">
+                    <div id="s-line-area" class=""></div>
+
+                    
+                </div>
+            </div>
+        </div>
+    }
+    <div class="col-lg-12 col-md-12 layout-spacing">
+        <div class="statbox widget box box-shadow">
+            <div class="widget-header">
+                <div class="row">
+                    <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <h4>My Projects</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="widget-content widget-content-area">
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-4">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Start Date</th>
+                                <th class="text-center">Priority</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (Project project in await ProjectService.GetUserProjectsAsync(user.Id))
+                            {
+                                <tr>
+                                    <td><span class="badge badge-Danger-Light">@project.Name</span></td>
+                                    <td><span class="badge badge-dark">@project.Description</span></td>
+                                    <td><span class="badge badge-warning">@project.StartDate</span></td>
+                                    <td class="text-center"><span class="badge badge-success">@project.ProjectPriority</span></td>
+                                    <td class="text-center">
+
+                                        <div class="dropdown custom-dropdown">
+                                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                                            </a>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
+                                                    <a class="dropdown-item" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">View Project Details</a>
+                                                    <a class="dropdown-item" asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@project.Id">Assign Members</a>
+                                                    <a class="dropdown-item" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">Edit</a>
+                                                    <a class="dropdown-item" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id">Archive This Project</a>
+                                                </div>
+
+                                            }@if (User.IsInRole("ProjectManager"))
+                                            {
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
+                                                    <a class="dropdown-item" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">View Project Details</a>
+                                                    <a class="dropdown-item" asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@project.Id">Assign Members</a>
+                                                </div>
+                                            }@if (User.IsInRole("Developer") || User.IsInRole("Submitter"))
+                                            {
+                                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink1">
+                                                    <a class="dropdown-item" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">View Project Details</a>
+                                                </div>
+                                            }
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            }
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts
+{
+
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+    <script src="~/assets/js/scrollspyNav.js"></script>
+    <script src="~/plugins/apex/apexcharts.min.js"></script>
+    <script src="~/plugins/apex/custom-apexcharts.js"></script>
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+    @*<----------------Js for Project Chart--------------------->*@
+
+    <script>
+        var sLineArea = {
+            chart: {
+                height: 500,
+                type: 'area',
+                toolbar: {
+                    show: false,
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            series: [{
+                name: 'Projects Assigned',
+                data: [31, 40, 28, 51, 42, 109, 100]
+            }, {
+                name: 'Projects Completed',
+                data: [11, 32, 45, 32, 34, 52, 41]
+            }],
+
+            xaxis: {
+                type: 'datetime',
+                categories: ["2018-09-19T00:00:00", "2018-09-19T01:30:00", "2018-09-19T02:30:00", "2018-09-19T03:30:00", "2018-09-19T04:30:00", "2018-09-19T05:30:00", "2018-09-19T06:30:00"],
+            },
+            tooltip: {
+                x: {
+                    format: 'dd/MM/yy HH:mm'
+                },
+            }
         }
-    </tbody>
-</table>
+
+        var chart = new ApexCharts(
+            document.querySelector("#s-line-area"),
+            sLineArea
+        );
+
+        chart.render();
+    </script>
+}

@@ -288,7 +288,7 @@
                             <li>
                                 <a asp-controller="Projects" asp-action="MyProjects">My Projects </a>
                             </li>
-                            
+
 
                             @*may create a foreach loop to display the most recent projects*@
                         </ul>
@@ -313,9 +313,9 @@
                             <li>
                                 <a asp-controller="Tickets" asp-action="Create"> Create New Ticket  </a>
                             </li>
-                           
 
-                         
+
+
                         </ul>
                     </li>
                     @if (User.IsInRole("Admin"))
@@ -370,7 +370,30 @@
                             </div>
                         </a>
                     </li>
-            </nav>
+                    <li class="menu">
+                        <a href="#elements" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                <span>Compnay</span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled" id="elements" data-parent="#accordionExample">
+                            <li>
+                                <a asp-action="Dashboard" asp-controller="Home"> Company Profile </a>
+                            </li>
+                            <li>
+                                <a asp-controller="Home" asp-action="CompanyDirectory"> Compnay Directory </a>
+                            </li>
+                            
+                           
+                        </ul>
+                    </li>
+
+
+</nav>
         </div>
         <!--  END SIDEBAR  -->
         <!--  BEGIN CONTENT AREA  -->

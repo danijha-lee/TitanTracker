@@ -1634,19 +1634,24 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="composeMailModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="modal"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    <div class="compose-box">
-                        <div class="compose-content">
-                            <form method="post" enctype="multipart/form-data">
+    <form method="post"asp-action="Create" enctype="multipart/form-data">
+        <input hidden name="Title" />
+        <input hidden name="Created" />
+        <input hidded name="Recipient" />
+        <input hidden name="Sender" />
+
+        <div class="modal fade" id="composeMailModal" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="modal"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        <div class="compose-box">
+                            <div class="compose-content">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="d-flex mb-4 mail-form">
                                             <p>From:</p>
-                                            <select class="" id="m-form">
+                                            <select name="SenderId"  id="m-form">
 
                                                 <option>@btUser.FullName</option>
                                             </select>
@@ -1659,8 +1664,12 @@
                                         <div class="d-flex mb-4 mail-to">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                                             <div class="">
-                                                <input type="email" id="m-to" placeholder="To" class="form-control">
-                                                <span class="validation-text"></span>
+                                                <select name="RecipientId" class="form-control" id="m-form">
+                                                    @foreach (BTUser members in users)
+                                                    {
+                                                        <option>@members.FullName</option>
+                                                    }
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -1669,13 +1678,8 @@
                                         <div class="d-flex mb-4 mail-cc">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg>
                                             <div>
-                                                <select class="" id="m-form">
-                                                    @foreach (BTUser members in users)
-                                                    {
-                                                        <option>@members.FullName</option>
-                                                    }
-                                                </select>
-                                                <span class="validation-text"></span>
+                                                <input type="date" />
+                                               <input type="text" name="Title" />
                                             </div>
                                         </div>
                                     </div>
@@ -1684,105 +1688,37 @@
                                 <div class="d-flex mb-4 mail-subject">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                                     <div class="w-100">
-                                        <input type="text" id="m-subject" placeholder="Subject" class="form-control">
+                                        <input type="text" name="emailSubject" id="m-subject" placeholder="Subject" class="form-control">
                                         <span class="validation-text"></span>
                                     </div>
                                 </div>
 
-                                <div class="d-flex">
+                                <div class="d-flex mb-3">
                                     <input type="file" class="form-control-file" id="mail_File_attachment" multiple="multiple">
                                 </div>
 
                                 <div id="editor-container">
+                                    <textarea class="form-control" rows="6" name="Message"></textarea>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button id="btn-save" class="btn float-left"> Save</button>
-                    <button id="btn-reply-save" class="btn float-left"> Save Reply</button>
-                    <button id="btn-fwd-save" class="btn float-left"> Save Fwd</button>
+                    <div class="modal-footer">
 
-                    <button class="btn" data-dismiss="modal"> <i class="flaticon-delete-1"></i> Discard</button>
+                       
 
-                    <button id="btn-reply" class="btn"> Reply</button>
-                    <button id="btn-fwd" class="btn"> Forward</button>
-                    <button id="btn-send" class="btn"> Send</button>
+                        <button class="btn" data-dismiss="modal"> <i class="flaticon-delete-1"></i> Discard</button>
+                        <button id="btn-save" class="btn float-left" type="submit" name="isDraft" value=true>Save As Draft</button>
+                      
+                        <button id="btn-send" type="submit" class="btn"> Send</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 
     <script src="~/assets/js/ie11fix/fn.fix-padStart.js"></script>
     <script src="~/plugins/editors/quill/quill.js"></script>
     <script src="~/plugins/sweetalerts/sweetalert2.min.js"></script>
     <script src="~/plugins/notification/snackbar/snackbar.min.js"></script>
     <script src="~/assets/js/apps/custom-mailbox.js"></script>
-
-    @*<h1>Index</h1>*@
-
-    @*<p>
-            <a asp-action="Create">Create New</a>
-        </p>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Title)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Message)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Created)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Viewed)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Ticket)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Recipient)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Sender)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Title)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Message)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Created)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Viewed)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Ticket.Description)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Recipient.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Sender.Id)
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>*@

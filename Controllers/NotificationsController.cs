@@ -104,6 +104,7 @@ namespace TitanTracker.Controllers
             ViewData["RecipientId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["SenderId"] = new SelectList(_context.Users, "Id", "Id");
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description");
+
             return View();
         }
 
@@ -112,17 +113,28 @@ namespace TitanTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Message,Created,Viewed,TicketId,RecipientId,SenderId")] Notification notification)
+        public async Task<IActionResult> Create([Bind("Id,Title,Message,Created,Viewed,TicketId,RecipientId,SenderId")] Notification notification, bool isDraft, string emailSubject)
         {
             if (ModelState.IsValid)
             {
+                if (isDraft)
+                {
+                    notification.Draft = true;
+                }
                 _context.Add(notification);
                 await _context.SaveChangesAsync();
+
+                if (!isDraft)
+                {
+                    await _notificationService.SendEmailNotificationAsync(notification, emailSubject);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["RecipientId"] = new SelectList(_context.Users, "Id", "Id", notification.RecipientId);
             ViewData["SenderId"] = new SelectList(_context.Users, "Id", "Id", notification.SenderId);
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", notification.TicketId);
+
             return View(notification);
         }
 
@@ -181,6 +193,22 @@ namespace TitanTracker.Controllers
             ViewData["SenderId"] = new SelectList(_context.Users, "Id", "Id", notification.SenderId);
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", notification.TicketId);
             return View(notification);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkAsArchived(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var notification = await _context.Notifications.FirstOrDefaultAsync(n => n.Id == id);
+
+            await _notificationService.ArchiveNotificationAsync(notification);
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Notifications/Delete/5

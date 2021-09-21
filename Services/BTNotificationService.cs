@@ -161,7 +161,6 @@ namespace TitanTracker.Services
             try
             {
                 notification.Viewed = true;
-                _context.Update(notification);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -175,7 +174,6 @@ namespace TitanTracker.Services
             try
             {
                 notification.Archived = true;
-                _context.Update(notification);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -189,7 +187,6 @@ namespace TitanTracker.Services
             try
             {
                 notification.Important = true;
-                _context.Update(notification);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)

@@ -51,13 +51,118 @@ namespace TitanTracker.Controllers
         }
 
         //ACTION FOR CURRENT USERS TICKETS
+        [HttpGet]
         public async Task<IActionResult> AllTickets()
         {
             int companyId = User.Identity.GetCompanyId().Value;
             BTUser user = await _userManager.GetUserAsync(User);
             List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(user.Id, companyId);
 
+            //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id");
+            //ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id");
+            if (User.IsInRole(Roles.Admin.ToString()))
+            {
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompany(companyId), "Id", "Name");
+            }
+            else
+            {
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetUserProjectsAsync(user.Id), "Id", "Name");
+            }
+
+            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name");
+            //ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Id");
+            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name");
+
             return View(tickets);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AllTickets([Bind("Id,Title,Description,TicketTypeId,ProjectId,TicketPriorityId")] Ticket ticket)
+        {
+            if (ModelState.IsValid)
+            {
+                ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(BTTicketStatus.New.ToString())).Value;
+                BTUser btUser = await _userManager.GetUserAsync(User);
+                ticket.OwnerUserId = btUser.Id;
+                ticket.Created = DateTimeOffset.Now;
+                await _ticketService.AddNewTicketAsync(ticket);
+
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+
+                await _ticketHistoryService.AddHistoryAsync(null, newTicket, btUser.Id);
+
+                BTUser Pm = await _projectService.GetProjectManagerAsync(ticket.ProjectId);
+                int companyId = User.Identity.GetCompanyId().Value;
+
+                List<BTUser> developers = await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, Roles.Developer.ToString());
+                List<BTUser> submitters = await _projectService.GetProjectMembersByRoleAsync(ticket.ProjectId, Roles.Submitter.ToString());
+
+                Notification notification = new()
+                {
+                    Title = "New Ticket Created",
+                    Message = $" A New Ticket: {ticket.Title}, Was Created By {btUser.FullName} for the project: {ticket.Project.Name}.",
+                    Created = DateTimeOffset.Now,
+                    TicketId = ticket.Id,
+                    RecipientId = Pm?.Id,
+                    SenderId = btUser.Id
+                };
+
+                if (Pm != null)
+                {
+                    await _notificationService.AddNotificationAsync(notification);
+                    await _notificationService.SendEmailNotificationAsync(notification, "New ticket added.");
+                }
+                else
+                {
+                    //notification.RecipientId = admin.Id;
+                    await _notificationService.AddAdminNotificationAsync(notification, companyId);
+                    await _notificationService.SendEmailNotificationsByRoleAsync(notification, companyId, Roles.Admin.ToString());
+                }
+
+                foreach (BTUser developer in developers)
+                {
+                    Notification developerNotification = new()
+                    {
+                        Title = "New Ticket Created",
+                        Message = $" A New Ticket: {ticket.Title}, Was Created By {btUser.FullName} for the project: {ticket.Project.Name}.",
+                        Created = DateTimeOffset.Now,
+                        TicketId = ticket.Id,
+                        RecipientId = developer?.Id,
+                        SenderId = btUser.Id
+                    };
+
+                    await _notificationService.AddNotificationAsync(developerNotification);
+                    await _notificationService.SendEmailNotificationAsync(developerNotification, "New ticket added.");
+                }
+
+                foreach (BTUser submitter in submitters)
+                {
+                    Notification submitterNotification = new()
+                    {
+                        Title = "New Ticket Created",
+                        Message = $" A New Ticket: {ticket.Title}, Was Created By {btUser.FullName} for the project: {ticket.Project.Name}.",
+                        Created = DateTimeOffset.Now,
+                        TicketId = ticket.Id,
+                        RecipientId = submitter?.Id,
+                        SenderId = btUser.Id
+                    };
+
+                    await _notificationService.AddNotificationAsync(submitterNotification);
+                    await _notificationService.SendEmailNotificationAsync(submitterNotification, "New ticket added.");
+                }
+
+                //_context.Add(ticket);
+                //await _context.SaveChangesAsync();
+                return RedirectToAction("AllTickets");
+            }
+            //ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperUserId);
+            //ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnerUserId);
+            //ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
+            //ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
+            //ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+            //ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name");
+
+            return RedirectToAction("AllTickets");
         }
 
         // GET: Tickets/Details/5

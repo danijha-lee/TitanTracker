@@ -4,91 +4,170 @@
 @{
     ViewData["Title"] = "Index";
 }
+<!-- BEGIN PAGE LEVEL STYLES -->
+<link href="~/plugins/drag-and-drop/dragula/dragula.css" rel="stylesheet" type="text/css" />
+<link href="~/plugins/drag-and-drop/dragula/example.css" rel="stylesheet" type="text/css" />
+<!-- END PAGE LEVEL STYLES -->
 
-<h1>Index</h1>
+<div class="col-lg-12 layout-spacing">
+    <div class="statbox widget box box-shadow">
+        <div class="widget-header">
+            <div class="row">
+                <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                    <h4>All Projects</h4>
+                </div>
+            </div>
+        </div>
+        <div class="widget-content widget-content-area">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Updated)
-            </th>
-          
-            <th>
-               Priority
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Project)
-            </th>
-            <th>
-               Type
-            </th>
-            <th>
-              Status
-            </th>
-            <th>
-              Submitter
-            </th>
-            <th>
-               Developer
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+            <div class='parent ex-4'>
+                <div class='row'>
+
+                    <div class="col-md-6">
+                        <div id='left-rollbacks' class='dragula'>
+                            @foreach (var item in Model)
+                            {
+                                <div class="card post text-post" style="">
+                                    <div class="card-body">
+                                        <div class="media user-meta d-sm-flex d-block text-sm-left text-center">
+                                            <img class="" src="~/assets/img/120x120.jpg" alt="avatar">
+                                            <div class="media-body">
+                                                <h5 class=""> @Html.DisplayNameFor(model => model.Title)</h5>
+                                                <p class="meta-time"> @Html.DisplayNameFor(model => model.Created)</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="post-content  text-sm-left text-center">
+                                            <p>
+                                               @Html.DisplayNameFor(model => model.Description)
+                                            </p>
+                                        </div>
+                                        <div class="row people-liked-post">
+                                            <div class="col-sm-5 text-sm-left text-center">
+                                                <ul class="list-inline people-liked-img">
+                                                    <li class="list-inline-item chat-online-usr">
+                                                        <img alt="avatar" src="~/assets/img/90x90.jpg" class="">
+                                                    </li>
+                                                    <li class="list-inline-item chat-online-usr">
+                                                        <img alt="avatar" src="~/assets/img/90x90.jpg">
+                                                    </li>
+                                                    <li class="list-inline-item chat-online-usr">
+                                                        <img alt="avatar" src="~/assets/img/90x90.jpg">
+                                                    </li>
+                                                    <li class="list-inline-item chat-online-usr">
+                                                        <img alt="avatar" src="~/assets/img/90x90.jpg">
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-sm-7 text-sm-right text-center">
+                                                <div class="people-liked-post-name">
+                                                    <span><a href="">Created By: @Html.DisplayNameFor(model => model.OwnerUser.FullName)</a> and 19 other like this</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+
+                            </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+           
+
+        </div>
+    </div>
+</div>
+
+
+@*<h1>Index</h1>
+
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Created)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Updated)
-                </td>
-            
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketPriorityId)
+                <th>
+                    @Html.DisplayNameFor(model => model.Title)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Created)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Updated)
+                </th>
 
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Project.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketType.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OwnerUser.FullName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
+                <th>
+                   Priority
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Project)
+                </th>
+                <th>
+                   Type
+                </th>
+                <th>
+                  Status
+                </th>
+                <th>
+                  Submitter
+                </th>
+                <th>
+                   Developer
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Created)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Updated)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TicketPriorityId)
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Project.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TicketType.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OwnerUser.FullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>*@
