@@ -84,8 +84,6 @@
                             </div>
                         </div>
                     </div>
-
-
                 </div>-->
             </div>
             @*<-------------End Modal---------------->*@
@@ -120,7 +118,7 @@
                             <h4 style="margin-left: 3px;">End Date</h4>
                         </div>
                         <div class="action-btn">
-                            <h4>Action</h4>                       
+                            <h4>Action</h4>
                         </div>
                     </div>
                 </div>
@@ -142,23 +140,31 @@
                             </div>
                             <div class="user-location">
                                 <p class="info-title">Start Date: </p>
-                                <p class="usr-location">@item.StartDate.ToString("MM-dd=yyyy"))</p>
+                                <p class="usr-location">@item.StartDate.ToString("MM-dd-yyyy"))</p>
                             </div>
                             <div class="user-phone">
                                 <p class="info-title">End Date: </p>
-                                <p class="usr-ph-no">@item.EndDate.ToString("MM-dd=yyyy"))</p>
+                                <p class="usr-ph-no">@item.EndDate.ToString("MM-dd-yyyy"))</p>
                             </div>
-                            <div class="action-btn">
-                                <a asp-action="Edit" asp-controller="Projects" asp-route-id="@item.Id"> <svg class="rounded bs-tooltip" title="edit this ticket" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a>
-                                <a asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id"><button class="btn btn-dark rounded bs-tooltip" title="Veiw Ticket Detials">Details</button></a>
-                            </div>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="action-btn">
+                                    <a asp-action="Edit" asp-controller="Projects" asp-route-id="@item.Id"> <svg class="rounded bs-tooltip" title="edit this Project" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a>
+                                </div>
+                                <div class="btn-group mb-4 mr-2" role="group">
+                                    <button id="btndefault" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                    <div class="dropdown-menu" aria-labelledby="btndefault">
+                                        <a asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id" class="dropdown-item"><i class="flaticon-home-fill-1 mr-1"></i>View Project Details</a>
+                                        <a asp-action="AddPm" asp-controller="Projects" asp-route-id="@item.Id" class="dropdown-item"><i class="flaticon-gear-fill mr-1"></i>Assign Project Manager</a>
+                                        <a asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@item.Id" class="dropdown-item"><i class="flaticon-bell-fill-2 mr-1"></i>Assign Members</a>
+                                        <a asp-action="Edit" asp-controller="Projects" asp-route-id="@item.Id" class="dropdown-item"><i class="flaticon-dots mr-1"></i>Archive</a>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
                 }
-
             </div>
-
-
         </div>
     </div>
     @section scripts
@@ -166,7 +172,3 @@
         <script src="~/plugins/jquery-ui/jquery-ui.min.js"></script>
         <script src="~/assets/js/apps/contact.js"></script>
     }
-
-   
-
-   

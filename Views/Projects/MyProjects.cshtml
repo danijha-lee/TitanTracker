@@ -31,7 +31,7 @@
         <div class="statbox widget box box-shadow">
             <div class="widget-header">
                 <div class="row">
-                    <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-8 col-md-12 col-sm-12 col-12">
                         <h4 class="text-center">My Projects</h4>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                                             <tr>
                                                 <td><span class="badge badge-Danger-Light">@project.Name</span></td>
                                                 <td><span class="badge badge-dark">@project.Description</span></td>
-                                                <td><span class="badge badge-warning">@project.StartDate</span></td>
+                                                <td><span class="badge badge-warning">@project.StartDate.ToString("MM-dd-yyyy")</span></td>
                                                 <td class="text-center"><span class="badge badge-success">@project.ProjectPriority</span></td>
                                                 <td class="text-center">
 

@@ -138,7 +138,7 @@
                         <div class="items">
                             <div class="item-content col-12">
                                 <div class="user-profile">
-                                    
+
                                     @*<img src="~/assets/img/90x90.jpg" alt="avatar">*@
                                     <div class="user-meta-info">
                                         <p class="user-name">@Html.DisplayFor(model => item.Title)</p>
@@ -157,10 +157,19 @@
                                     <p class="info-title">Description: </p>
                                     <p class="usr-ph-no">@Html.DisplayFor(model => item.Description)</p>
                                 </div>
-                                <div class="action-btn">
-                                    <a asp-action="Edit" asp-controller="Tickets" asp-route-id="@item.Id"> <svg class="rounded bs-tooltip" title="edit this ticket" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a>
-                                    <a asp-action="Details" asp-controller="Tickets" asp-route-id="@item.Id"><button class="btn btn-success rounded bs-tooltip" title="Veiw Ticket Detials">Details</button></a>
-                                </div>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <div class="action-btn">
+                                        <a asp-action="Edit" asp-controller="Tickets" asp-route-id="@item.Id"> <svg class="rounded bs-tooltip" title="edit this ticket" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a>
+                                    </div>
+                                    <div class="btn-group mb-4 mr-2" role="group">
+                                        <button id="btndefault" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+                                        <div class="dropdown-menu" aria-labelledby="btndefault">
+                                            <a asp-action="Details" asp-controller="Tickets" asp-route-id="@item.Id" class="dropdown-item"><i class="flaticon-home-fill-1 mr-1"></i>View Ticket Details</a>
+                                            <a asp-action="Edit" asp-controller="Tickets" asp-route-id="@item.Id" class="dropdown-item"><i class="flaticon-dots mr-1"></i>Archive</a>
+                                        </div>
+                                    </div>
+                                }
                             </div>
                         </div>
                     }
