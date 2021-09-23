@@ -32,14 +32,14 @@
                                         <div class="media user-meta d-sm-flex d-block text-sm-left text-center">
                                             <img class="" src="~/assets/img/120x120.jpg" alt="avatar">
                                             <div class="media-body">
-                                                <h5 class=""> @Html.DisplayNameFor(model => model.Title)</h5>
-                                                <p class="meta-time"> @Html.DisplayNameFor(model => model.Created)</p>
+                                                <h5 class=""> @Html.DisplayFor(model => item.Title)</h5>
+                                                <p class="meta-time"> @Html.DisplayFor(model => item.Created)</p>
                                             </div>
                                         </div>
 
                                         <div class="post-content  text-sm-left text-center">
                                             <p>
-                                               @Html.DisplayNameFor(model => model.Description)
+                                               @Html.DisplayFor(model => item.Description)
                                             </p>
                                         </div>
                                         <div class="row people-liked-post">
@@ -61,7 +61,7 @@
                                             </div>
                                             <div class="col-sm-7 text-sm-right text-center">
                                                 <div class="people-liked-post-name">
-                                                    <span><a href="">Created By: @Html.DisplayNameFor(model => model.OwnerUser.FullName)</a> and 19 other like this</span>
+                                                    <span><a href="">Created By: @Html.DisplayFor(model => item.OwnerUser.FullName)</a> and 19 other like this</span>
                                                 </div>
                                             </div>
                                         </div>

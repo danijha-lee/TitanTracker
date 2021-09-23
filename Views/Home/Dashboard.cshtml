@@ -68,6 +68,8 @@
     <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
     <link href="~/plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/widgets/modules-widgets.css">
+    <link href="~/assets/css/elements/custom-pagination.css" rel="stylesheet" type="text/css" />
+
     <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
     <!--  BEGIN MAIN CONTAINER  -->
     <div class="main-container mt-3" id="container">
@@ -76,469 +78,493 @@
         @*<div id="content" class="main-content">*@
         @*<div class="layout-px-spacing">
 
-            <div class="row layout-top-spacing">*@
+        <div class="row layout-top-spacing">*@
 
-                
 
-                <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-                    <div class="widget widget-chart-three">
-                        <div class="widget-heading">
-                            <div class="">
-                                <h5 class="">My Stats</h5>
-                            </div>
 
-                            <div class="dropdown ">
-                                <a class="dropdown-toggle" href="#" role="button" id="uniqueVisitors" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-                                </a>
+        <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+            <div class="widget widget-chart-three">
+                <div class="widget-heading">
+                    <div class="">
+                        <h5 class="">My Stats</h5>
+                    </div>
 
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="uniqueVisitors">
-                                    <a class="dropdown-item" href="javascript:void(0);">View</a>
-                                    <a class="dropdown-item" href="javascript:void(0);">Update</a>
-                                    <a class="dropdown-item" href="javascript:void(0);">Download</a>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="dropdown ">
+                        <a class="dropdown-toggle" href="#" role="button" id="uniqueVisitors" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                        </a>
 
-                        <div class="widget-content">
-                            <div id="uniqueVisits"></div>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="uniqueVisitors">
+                            <a class="dropdown-item" href="javascript:void(0);">View</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Update</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Download</a>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-                    <div class="widget widget-activity-five">
-
-                        <div class="widget-heading">
-                            <h5 class="">Recent Notifications</h5>
-
-                            <div class="task-action">
-                                <div class="dropdown">
-                                    <a class="dropdown-toggle  rounded bs-tooltip" title="More Options" href="#" role="button" id="pendingTask" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="pendingTask" style="will-change: transform;">
-                                        <a class="dropdown-item" asp-action="Index" asp-controller="Notificaions">View All</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Mark as Read</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="widget-content">
-
-                            <div class="w-shadow-top"></div>
-
-                            <div class="mt-container mx-auto">
-                                <div class="timeline-line">
-
-                                    @foreach (Notification notification in notifications)
-                                    {
-
-                                        <div class="item-timeline timeline-new">
-                                            <div class="t-dot">
-                                                <div class="t-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
-                                            </div>
-                                            <div class="t-content">
-                                                <div class="t-uppercontent">
-
-                                                    <h5>@notification.Sender.FullName : <a class=" rounded bs-tooltip" title="View This Message" asp-action="Details" asp-controller="Notifications" asp-route-id="@notification.Id"><span>@notification.Title</span></a></h5>
-                                                </div>
-                                                <p>@notification.Created.ToString("dd MMM, yyyy")</p>
-                                            </div>
-                                        </div>
-
-                                    }
-                                </div>
-                            </div>
-
-                            <div class="w-shadow-bottom"></div>
-                        </div>
-                    </div>
+                <div class="widget-content">
+                    <div id="uniqueVisits"></div>
                 </div>
+            </div>
+        </div>
 
-                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-                    <div class="widget widget-card-one">
-                        <div class="widget-content">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+            <div class="widget widget-activity-five">
 
-                            <div class="media">
-                                <div class="w-img">
-                                    <img src="~/assets/img/90x90.jpg" alt="avatar">
-                                </div>
-                                <div class="media-body">
-                                    <h6>Jimmy Turner</h6>
-                                    <p class="meta-date-time">Monday, Nov 18</p>
-                                </div>
-                            </div>
+                <div class="widget-heading">
+                    <h5 class="">Recent Notifications</h5>
 
-                            <p>"Duis aute irure dolor" in reprehenderit in voluptate velit esse cillum "dolore eu fugiat" nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
-
-                            <div class="w-action">
-                                <div class="card-like">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-thumbs-up"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
-                                    <span>551 Likes</span>
-                                </div>
-
-                                <div class="read-more">
-                                    <a href="javascript:void(0);">Read More <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-                    <div class="widget widget-card-two">
-                        <div class="widget-content">
-
-                            <div class="media">
-                                <div class="w-img">
-                                    <img src="~/assets/img/90x90.jpg" alt="avatar">
-                                </div>
-                                <div class="media-body">
-                                    <h6>Dev Summit - New York</h6>
-                                    <p class="meta-date-time">Bronx, NY</p>
-                                </div>
-                            </div>
-
-                            <div class="card-bottom-section">
-                                <h5>4 Members Going</h5>
-                                <div class="img-group">
-                                    <img src="~/assets/img/90x90.jpg" alt="avatar">
-                                    <img src="~/assets/img/90x90.jpg" alt="avatar">
-                                    <img src="~/assets/img/90x90.jpg" alt="avatar">
-                                    <img src="~/assets/img/90x90.jpg" alt="avatar">
-                                </div>
-                                <a href="javascript:void(0);" class="btn">View Details</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-                    <div class="widget widget-five">
-
-                        <div class="widget-heading">
-
-                            <a href="javascript:void(0)" class="task-info">
-
-                                <div class="usr-avatar">
-                                    <span>FD</span>
-                                </div>
-
-                                <div class="w-title">
-
-                                    <h5>Figma Design</h5>
-                                    <span>Design Reset</span>
-                                </div>
+                    <div class="task-action">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle  rounded bs-tooltip" title="More Options" href="#" role="button" id="pendingTask" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
                             </a>
 
-                            <div class="task-action">
-                                <div class="dropdown">
-                                    <a class="dropdown-toggle" href="#" role="button" id="pendingTask" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="pendingTask" style="will-change: transform;">
-                                        <a class="dropdown-item" href="javascript:void(0);">View Project</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Edit Project</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Mark as Done</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="widget-content">
-
-                            <p>Doloribus nisi vel suscipit modi, optio ex repudiandae voluptatibus officiis commodi. Nesciunt quas aut neque incidunt!</p>
-
-                            <div class="progress-data">
-
-                                <div class="progress-info">
-                                    <div class="task-count"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg><p>5 Tasks</p></div>
-                                    <div class="progress-stats"><p>86.2%</p></div>
-                                </div>
-
-                                <div class="progress">
-                                    <div class="progress-bar bg-primary" role="progressbar" style="width: 65%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-
-                            <div class="meta-info">
-
-                                <div class="due-time">
-                                    <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 3 Days Left</p>
-                                </div>
-
-                                <div class="avatar--group">
-
-                                    <div class="avatar translateY-axis more-group">
-                                        <span class="avatar-title">+6</span>
-                                    </div>
-                                    <div class="avatar translateY-axis">
-                                        <img alt="avatar" src="~/assets/img/90x90.jpg" />
-                                    </div>
-                                    <div class="avatar translateY-axis">
-                                        <img alt="avatar" src="~/assets/img/90x90.jpg" />
-                                    </div>
-                                    <div class="avatar translateY-axis">
-                                        <img alt="avatar" src="~/assets/img/90x90.jpg" />
-                                    </div>
-                                </div>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="pendingTask" style="will-change: transform;">
+                                <a class="dropdown-item" asp-action="Index" asp-controller="Notificaions">View All</a>
+                                <a class="dropdown-item" href="javascript:void(0);">Mark as Read</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+                <div class="widget-content">
 
-                    <div class="widget widget-activity-four">
+                    <div class="w-shadow-top"></div>
 
-                        <div class="widget-heading">
-                            <h5 class="">Recent Ticket Activity</h5>
-                            <div class="w-icon">
-                                <a class="btn btn-primary  rounded bs-tooltip" title="More Options" href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
-                            </div>
-                        </div>
+                    <div class="mt-container mx-auto">
+                        <div class="timeline-line">
 
-                        <div class="widget-content">
+                            @foreach (Notification notification in notifications)
+                            {
 
-                            <div class="mt-container-ra mx-auto">
-                                <div class="timeline-line">
-                                    @foreach (TicketHistory ticketHistory in await TicketHistoryService.GetCompanyTicketsHistoriesAsync(companyId))
-                                    {
-                                        <div class="item-timeline timeline-primary">
-                                            <div class="t-dot" data-original-title="" title="">
-                                            </div>
-                                            <div class="t-text">
-                                                <p>@ticketHistory.Description</p>
-                                                @*<span class="badge">Pending</span>*@
-                                                <p class="t-time">@ticketHistory.Created.ToString("t")</p>
-                                            </div>
+                                <div class="item-timeline timeline-new">
+                                    <div class="t-dot">
+                                        <div class="t-secondary"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
+                                    </div>
+                                    <div class="t-content">
+                                        <div class="t-uppercontent">
+
+                                            <h5>@notification.Sender.FullName : <a class=" rounded bs-tooltip" title="View This Message" asp-action="Details" asp-controller="Notifications" asp-route-id="@notification.Id"><span>@notification.Title</span></a></h5>
                                         </div>
-
-                                    }
+                                        <p>@notification.Created.ToString("dd MMM, yyyy")</p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="tm-action-btn">
-                                <button class="btn"><span>View All</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="w-shadow-bottom"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+            <div class="widget widget-card-one">
+                <div class="widget-content">
+
+                    <div class="media">
+                        <div class="w-img">
+                            <img src="~/assets/img/90x90.jpg" alt="avatar">
+                        </div>
+                        <div class="media-body">
+                            <h6>Jimmy Turner</h6>
+                            <p class="meta-date-time">Monday, Nov 18</p>
+                        </div>
+                    </div>
+
+                    <p>"Duis aute irure dolor" in reprehenderit in voluptate velit esse cillum "dolore eu fugiat" nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+
+                    <div class="w-action">
+                        <div class="card-like">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-thumbs-up"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                            <span>551 Likes</span>
+                        </div>
+
+                        <div class="read-more">
+                            <a href="javascript:void(0);">Read More <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+            <div class="widget widget-card-two">
+                <div class="widget-content">
+
+                    <div class="media">
+                        <div class="w-img">
+                            <img src="~/assets/img/90x90.jpg" alt="avatar">
+                        </div>
+                        <div class="media-body">
+                            <h6>Dev Summit - New York</h6>
+                            <p class="meta-date-time">Bronx, NY</p>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom-section">
+                        <h5>4 Members Going</h5>
+                        <div class="img-group">
+                            <img src="~/assets/img/90x90.jpg" alt="avatar">
+                            <img src="~/assets/img/90x90.jpg" alt="avatar">
+                            <img src="~/assets/img/90x90.jpg" alt="avatar">
+                            <img src="~/assets/img/90x90.jpg" alt="avatar">
+                        </div>
+                        <a href="javascript:void(0);" class="btn">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+            <div class="widget widget-five">
+
+                <div class="widget-heading">
+
+                    <a href="javascript:void(0)" class="task-info">
+
+                        <div class="usr-avatar">
+                            <span>FD</span>
+                        </div>
+
+                        <div class="w-title">
+
+                            <h5>Figma Design</h5>
+                            <span>Design Reset</span>
+                        </div>
+                    </a>
+
+                    <div class="task-action">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" href="#" role="button" id="pendingTask" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="pendingTask" style="will-change: transform;">
+                                <a class="dropdown-item" href="javascript:void(0);">View Project</a>
+                                <a class="dropdown-item" href="javascript:void(0);">Edit Project</a>
+                                <a class="dropdown-item" href="javascript:void(0);">Mark as Done</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing"style="height: 100px;">
-                    <div class="widget widget-table-one">
-                        <div class="widget-heading">
-                            <h5 class="text-center">Company Directory</h5>
-                            <div class="task-action">
-                                <div class="dropdown">
-                                    <a class="dropdown-toggle  rounded bs-tooltip" title="More Options" href="#" role="button" id="pendingTask" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-                                    </a>
+                <div class="widget-content">
 
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="pendingTask" style="will-change: transform;">
-                                        <a class="dropdown-item" href="javascript:void(0);">View Full Directory</a>
-                                        <a class="dropdown-item">Update Your Information</a>
-                                        <a class="dropdown-item" asp-action="Index" asp-controller="Notifications">Send a Message</a>
-                                    </div>
-                                </div>
+                    <p>Doloribus nisi vel suscipit modi, optio ex repudiandae voluptatibus officiis commodi. Nesciunt quas aut neque incidunt!</p>
+
+                    <div class="progress-data">
+
+                        <div class="progress-info">
+                            <div class="task-count"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg><p>5 Tasks</p></div>
+                            <div class="progress-stats"><p>86.2%</p></div>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 65%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+
+                    <div class="meta-info">
+
+                        <div class="due-time">
+                            <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> 3 Days Left</p>
+                        </div>
+
+                        <div class="avatar--group">
+
+                            <div class="avatar translateY-axis more-group">
+                                <span class="avatar-title">+6</span>
+                            </div>
+                            <div class="avatar translateY-axis">
+                                <img alt="avatar" src="~/assets/img/90x90.jpg" />
+                            </div>
+                            <div class="avatar translateY-axis">
+                                <img alt="avatar" src="~/assets/img/90x90.jpg" />
+                            </div>
+                            <div class="avatar translateY-axis">
+                                <img alt="avatar" src="~/assets/img/90x90.jpg" />
                             </div>
                         </div>
-                        @foreach (BTUser member in await CompanyInfoService.GetAllMembersAsync(companyId))
-                        {
-                            <div class="widget-content">
-                                <div class="transactions-list">
-                                    <div class="t-item">
-                                        <div class="t-company-name">
-                                            <div class="t-icon">
-                                                <div class="icon">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                                                </div>
-                                            </div>
-                                            <div class="t-name">
-                                                <h4>@member.FullName</h4>
-                                                <p class="meta-date">@member.Email</p>
-                                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+
+            <div class="widget widget-activity-four">
+
+                <div class="widget-heading">
+                    <h5 class="">Recent Ticket Activity</h5>
+                    <div class="w-icon">
+                        <a class="btn btn-primary  rounded bs-tooltip" title="More Options" href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+                    </div>
+                </div>
+
+                <div class="widget-content">
+
+                    <div class="mt-container-ra mx-auto">
+                        <div class="timeline-line">
+                            @foreach (TicketHistory ticketHistory in await TicketHistoryService.GetCompanyTicketsHistoriesAsync(companyId))
+                            {
+                                <div class="item-timeline timeline-primary">
+                                    <div class="t-dot" data-original-title="" title="">
+                                    </div>
+                                    <div class="t-text">
+                                        <p>@ticketHistory.Description</p>
+                                        @*<span class="badge">Pending</span>*@
+                                        <p class="t-time">@ticketHistory.Created.ToString("t")</p>
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+
+                    <div class="tm-action-btn">
+                        <button class="btn"><span>View All</span> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing" style="height: 100px;">
+            <div class="widget widget-table-one">
+                <div class="widget-heading">
+                    <h5 class="text-center">Company Directory</h5>
+                    <div class="task-action">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle  rounded bs-tooltip" title="More Options" href="#" role="button" id="pendingTask" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="pendingTask" style="will-change: transform;">
+                                <a class="dropdown-item" href="javascript:void(0);">View Full Directory</a>
+                                <a class="dropdown-item">Update Your Information</a>
+                                <a class="dropdown-item" asp-action="Index" asp-controller="Notifications">Send a Message</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @foreach (BTUser member in await CompanyInfoService.GetAllMembersAsync(companyId))
+                {
+                    <div class="widget-content">
+                        <div class="transactions-list">
+                            <div class="t-item">
+                                <div class="t-company-name">
+                                    <div class="t-icon">
+                                        <div class="icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                                         </div>
-                                        <div class="t-rate rate-dec">
-                                            <p><span></span></p>
-                                        </div>
+                                    </div>
+                                    <div class="t-name">
+                                        <h4>@member.FullName</h4>
+                                        <p class="meta-date">@member.Email</p>
                                     </div>
                                 </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-
-                <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-
-                    <div class="widget widget-account-invoice-three">
-
-                        <div class="widget-heading">
-                            <div class="wallet-usr-info">
-                                <div class="usr-name">
-                                    <span><img src="~/assets/img/90x90.jpg" alt="admin-profile" class="img-fluid">@user.FullName</span>
-                                </div>
-                                <div class="add">
-                                    <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <h1 class="text-center">Account</h1>
-                                @*<h5 class=""><span class="w-currency">$</span>2953</h5>*@
-                            </div>
-                        </div>
-
-                        <div class="widget-amount">
-
-                            <div class="w-a-info funds-received">
-                                <button class="btn btn-dark" asp-action="AllTickets" asp-controller="Tickets"> View My Profile</button>
-                            </div>
-
-                            <div class="w-a-info funds-spent">
-                                <button class="btn btn-dark " asp-action="MyProjects" asp-controller="Projects"> Update My Profile</button>
-                            </div>
-                        </div>
-
-                        <div class="widget-content">
-
-                           
-
-                            <div class="invoice-list">
-
-                                <div class="inv-detail">
-                                    <div class="info-detail-1">
-                                        <p>Current Company: </p>
-                                        <button class="btn btn-warning rounded bs-tooltip" title="View Company Profile"><span class="w-currency"></span> <span class="bill-amount">@user.Company.Name</span></button>
-                                    </div>
-                                    <div class="info-detail-2">
-                                        <p>Current Role:</p>
-                                        <p><span class="w-currency"></span> <span class="bill-amount">-</span></p>
-                                    </div>
-                                </div>
-
-                                <div class="inv-action">
-                                    <a href="javascript:void(0);" class="btn btn-outline-primary view-details">Change Account Password</a>
-                                    <a href="javascript:void(0);" class="btn btn-outline-primary pay-now">Update Profile Picture</a>
+                                <div class="t-rate rate-dec">
+                                    <p><span></span></p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                @*<--------------------------TABLE FOR USER;S TICKETS -------------------------------------------->*@
-                <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-                    <div class="widget widget-table-two">
+                }
+            </div>
+        </div>
 
-                        <div class="widget-heading">
-                            <h5 class="text-center">@user.FullName's Tickets</h5>
+        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+
+            <div class="widget widget-account-invoice-three">
+
+                <div class="widget-heading">
+                    <div class="wallet-usr-info">
+                        <div class="usr-name">
+                            <span><img src="~/assets/img/90x90.jpg" alt="admin-profile" class="img-fluid">@user.FullName</span>
                         </div>
-
-                        <div class="widget-content">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th><div class="th-content">Title</div></th>
-                                            <th><div class="th-content">Priority</div></th>
-                                            <th><div class="th-content">Project</div></th>
-                                            <th><div class="th-content th-heading">Type</div></th>
-                                            <th><div class="th-content">Status</div></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (Ticket ticket in await TicketService.GetTicketsByUserIdAsync(user.Id, companyId))
-                                        {
-
-                                            <tr>
-
-                                                <td> <a class=" rounded bs-tooltip" title="View This Ticket" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><div class="td-content customer-name">@*<img src="~/assets/img/90x90.jpg" alt="avatar">*@<span></span></div>@Html.DisplayFor(modelItem => ticket.Title)</a></td>
-                                                <td><div class="td-content product-brand text-primary">@Html.DisplayFor(modelItem => ticket.TicketPriority.Name)</div></td>
-                                                <td><div class="td-content product-invoice"></div>@Html.DisplayFor(modelItem => ticket.Project.Name)</td>
-                                                <td><div class="td-content pricing"><span class=""></span></div>@Html.DisplayFor(modelItem => ticket.TicketType.Name)</td>
-                                                <td><div class="td-content"><span class="badge badge-success"></span></div>@Html.DisplayFor(modelItem => ticket.TicketStatus.Name)</td>
-                                            </tr>
-                                        }
-
-                                        @if ((await TicketService.GetTicketsByUserIdAsync(user.Id, companyId)).Count == 0)
-                                        {
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    No Tickets yet.
-                                                </td>
-                                            </tr>
-
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="add">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></span>
                         </div>
+                    </div>
+                    <div class="text-center">
+                        <h1 class="text-center">Account</h1>
+                        @*<h5 class=""><span class="w-currency">$</span>2953</h5>*@
                     </div>
                 </div>
 
-                @*-----------------------------------------START PROJECT'S TABLE HERE-------------------------------------------->*@
-                <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-                    <div class="widget widget-table-three">
+                <div class="widget-amount">
 
-                        <div class="widget-heading">
-                            <h5 class="text-center">@user.FullName's Projects</h5>
+                    <div class="w-a-info funds-received">
+                        <button class="btn btn-dark" asp-action="AllTickets" asp-controller="Tickets"> View My Profile</button>
+                    </div>
+
+                    <div class="w-a-info funds-spent">
+                        <button class="btn btn-dark " asp-action="MyProjects" asp-controller="Projects"> Update My Profile</button>
+                    </div>
+                </div>
+
+                <div class="widget-content">
+
+
+
+                    <div class="invoice-list">
+
+                        <div class="inv-detail">
+                            <div class="info-detail-1">
+                                <p>Current Company: </p>
+                                <button class="btn btn-warning rounded bs-tooltip" title="View Company Profile"><span class="w-currency"></span> <span class="bill-amount">@user.Company.Name</span></button>
+                            </div>
+                            <div class="info-detail-2">
+                                <p>Current Role:</p>
+                                <p><span class="w-currency"></span> <span class="bill-amount">-</span></p>
+                            </div>
                         </div>
 
-                        <div class="widget-content">
-                            <div class="table-responsive">
-                                <table class="table table-scroll">
-                                    <thead>
-                                        <tr>
-                                            <th><div class="th-content">Name</div></th>
-                                            <th><div class="th-content th-heading">Start Date</div></th>
-                                            <th><div class="th-content th-heading">End Date</div></th>
-                                            <th><div class="th-content"</div></th>
-                                            <th><div class="th-content"></div></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var item in Model)
-                                        {
-                                            <tr>
-                                                <td><div class="td-content product-name"><img src="~/assets/img/90x90.jpg" alt="product"><div class="align-self-center"><a asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id"><p class="prd-name">@Html.DisplayFor(modelItem => item.Name)</p></a><p class="prd-category text-primary">@Html.DisplayFor(modelItem => item.ProjectPriority.Name)</p></div></div></td>
-                                                <td><div class="td-content"><span class="pricing">@Html.DisplayFor(modelItem => item.StartDate@*.ToString("MM/dd/yyyy")*@)</span></div></td>
-                                                <td><div class="td-content"><span class="discount-pricing">@Html.DisplayFor(modelItem => item.EndDate@*.ToString("MM/dd/yyyy")*@)</span></div></td>
-                                                @*<td><div class="td-content">170</div></td>*@
-                                                <td><div class="td-content"><a class=" rounded bs-tooltip" title="View This Project" asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id" class="text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg> View</a></div></td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="inv-action">
+                            <a href="javascript:void(0);" class="btn btn-outline-primary view-details">Change Account Password</a>
+                            <a href="javascript:void(0);" class="btn btn-outline-primary pay-now">Update Profile Picture</a>
                         </div>
                     </div>
                 </div>
-            @*</div>*@
+            </div>
+        </div>
+        @*<--------------------------TABLE FOR USER;S TICKETS -------------------------------------------->*@
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+            <div class="widget widget-table-two">
+
+                <div class="widget-heading">
+                    <h5 class="text-center">@user.FullName's Tickets</h5>
+                </div>
+
+                <div class="widget-content">
+                    <div class="table-responsive">
+                        <table class="table dt-table-hover" id="ticketTable">
+                            <thead>
+                                <tr>
+                                    <th><div class="th-content">Title</div></th>
+                                    <th><div class="th-content">Priority</div></th>
+                                    <th><div class="th-content">Project</div></th>
+                                    <th><div class="th-content th-heading">Type</div></th>
+                                    <th><div class="th-content">Status</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Ticket ticket in await TicketService.GetTicketsByUserIdAsync(user.Id, companyId))
+                                {
+
+                                    <tr>
+
+                                        <td> <a class=" rounded bs-tooltip" title="View This Ticket" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><div class="td-content customer-name">@*<img src="~/assets/img/90x90.jpg" alt="avatar">*@<span></span></div>@Html.DisplayFor(modelItem => ticket.Title)</a></td>
+                                        <td><div class="td-content product-brand text-primary">@Html.DisplayFor(modelItem => ticket.TicketPriority.Name)</div></td>
+                                        <td><div class="td-content product-invoice"></div>@Html.DisplayFor(modelItem => ticket.Project.Name)</td>
+                                        <td><div class="td-content pricing"><span class=""></span></div>@Html.DisplayFor(modelItem => ticket.TicketType.Name)</td>
+                                        <td><div class="td-content"><span class="badge badge-success"></span></div>@Html.DisplayFor(modelItem => ticket.TicketStatus.Name)</td>
+                                    </tr>
+                                }
+
+                                @if ((await TicketService.GetTicketsByUserIdAsync(user.Id, companyId)).Count == 0)
+                                {
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>
+                                            No Tickets yet.
+                                        </td>
+                                    </tr>
+
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        @*-----------------------------------------START PROJECT'S TABLE HERE-------------------------------------------->*@
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+            <div class="widget widget-table-three">
+
+                <div class="widget-heading">
+                    <h5 class="text-center">@user.FullName's Projects</h5>
+                </div>
+
+                <div class="widget-content">
+                    <div class="table-responsive">
+                        <table class="table dt-table-hover" id="projectTable">
+                            <thead>
+                                <tr>
+                                    <th><div class="th-content">Name</div></th>
+                                    <th><div class="th-content th-heading">Start Date</div></th>
+                                    <th><div class="th-content th-heading">End Date</div></th>
+                                    @*<th><div class="th-content"></div></th>*@
+                                    <th><div class="th-content"></div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td><div class="td-content product-name"><img src="~/assets/img/90x90.jpg" alt="product"><div class="align-self-center"><a asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id"><p class="prd-name">@Html.DisplayFor(modelItem => item.Name)</p></a><p class="prd-category text-primary">@Html.DisplayFor(modelItem => item.ProjectPriority.Name)</p></div></div></td>
+                                        <td><div class="td-content"><span class="pricing">@item.StartDate.ToString("MM/dd/yyyy")</span></div></td>
+                                        <td><div class="td-content"><span class="discount-pricing">@item.EndDate.ToString("MM/dd/yyyy")</span></div></td>
+                                        @*<td><div class="td-content">170</div></td>*@
+                                        <td><div class="td-content"><a class=" rounded bs-tooltip" title="View This Project" asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id" class="text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg> View</a></div></td>
+                                    </tr>
+                                }
+
+                                @*<div class="paginating-container pagination-default">
+                                    <ul class="pagination">
+                                        <li class="prev"><a href="javascript:void(0);">Prev</a></li>
+                                        <li><a href="javascript:void(0);">1</a></li>
+                                        <li class="active"><a href="javascript:void(0);">2</a></li>
+                                        <li><a href="javascript:void(0);">3</a></li>
+                                        <li class="next"><a href="javascript:void(0);">Next</a></li>
+                                    </ul>
+                                </div>*@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*</div>*@
         @*</div>
-    </div>*@
-    <!--  END CONTENT AREA  -->
-    @*</div>*@
-    <!-- END MAIN CONTAINER -->
-    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-    <script src="~/assets/js/libs/jquery-3.1.1.min.js"></script>
-    <script src="~/bootstrap/js/popper.min.js"></script>
-    <script src="~/bootstrap/js/bootstrap.min.js"></script>
-    <script src="~/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script src="~/assets/js/app.js"></script>
+        </div>*@
+        <!--  END CONTENT AREA  -->
+        @*</div>*@
+        <!-- END MAIN CONTAINER -->
+        <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+        <script src="~/assets/js/libs/jquery-3.1.1.min.js"></script>
+        <script src="~/bootstrap/js/popper.min.js"></script>
+        <script src="~/bootstrap/js/bootstrap.min.js"></script>
+        <script src="~/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+        <script src="~/assets/js/app.js"></script>
 
-    <script>
-        $(document).ready(function () {
-            App.init();
-        });
-    </script>
-    <script src="~/assets/js/custom.js"></script>
-    <!-- END GLOBAL MANDATORY SCRIPTS -->
-    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
-    <script src="~/plugins/apex/apexcharts.min.js"></script>
-    <script src="~/assets/js/widgets/modules-widgets.js"></script>
-    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+        <script>
+            $(document).ready(function () {
+                App.init();
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#ticketTable').DataTable();
+            });
+        </script>
+        <script>
+            $(document).ready(function () {
+                $('#projectTable').DataTable();
+            });
+        </script>
+        <script src="~/assets/js/custom.js"></script>
+        <!-- END GLOBAL MANDATORY SCRIPTS -->
+        <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+        <script src="~/plugins/apex/apexcharts.min.js"></script>
+        <script src="~/assets/js/widgets/modules-widgets.js"></script>
+        <script src="~/assets/js/scrollspyNav.js"></script>
+        <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
 </body>

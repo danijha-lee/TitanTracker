@@ -36,6 +36,10 @@
     <link href="~/plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">
     <link href="~/assets/css/dashboard/dash_1.css" rel="stylesheet" type="text/css" />
     <link href="~/assets/css/dashboard/dash_2.css" rel="stylesheet" type="text/css" />
+    <link href="~/plugins/table/datatable/custom_dt_custom.css" rel="stylesheet" />
+    <link href="~/plugins/table/datatable/datatables.css" rel="stylesheet" />
+
+    <link href="~/plugins/table/datatable/dt-global_style.css" rel="stylesheet" />
 
     <link href="~/css/site.css" rel="stylesheet" />
     <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
@@ -192,7 +196,6 @@
                                 }
 
                             }
-
                         </div>
                     </a>
 
@@ -210,7 +213,6 @@
                         <div class="dropdown-item">
                             <a class="" href="javascript:document.getElementById('logoutForm').submit();"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> Sign Out</a>
                         </div>
-
                     </div>
                 </li>
             </ul>
@@ -229,15 +231,13 @@
 
                         <nav class="breadcrumb-one" aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <a asp-action="Dashboard" asp-controller="Home">
-                                <li class="breadcrumb-item">Dashboard</li>
-                                </a>
+
+                                <li class="breadcrumb-item"><a asp-action="Dashboard" asp-controller="Home">Dashboard </a></li>
                             </ol>
                         </nav>
                     </div>
                 </li>
             </ul>
-           
         </header>
     </div>
     <!--  END NAVBAR  -->
@@ -256,7 +256,7 @@
                 <ul class="list-unstyled menu-categories" id="accordionExample">
 
                     <li class="menu">
-                        <a asp-action="Dashboard" asp-controller="Home" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <a href="#dashboard" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                                 Dashboard
@@ -265,8 +265,11 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </a>
-                        <ul class="collapse submenu list-unstyled" id="components" data-parent="#accordionExample">
+                        <ul class="collapse submenu list-unstyled" id="dashboard" data-parent="#accordionExample">
 
+                            <li>
+                                <a asp-controller="Home" asp-action="Dashboard"> Dashboard </a>
+                            </li>
                             <li>
                                 <a asp-controller="Projects" asp-action="MyProjects">Company Dashboard </a>
                             </li>
@@ -274,7 +277,7 @@
                     </li>
 
                     <li class="menu">
-                        <a href="#components" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <a href="#projects" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" role="button">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                                 <span>Projects</span>
@@ -283,12 +286,11 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </a>
-                        <ul class="collapse submenu list-unstyled" id="components" data-parent="#accordionExample">
+                        <ul class="collapse submenu list-unstyled" id="projects" data-parent="#accordionExample">
 
                             <li>
                                 <a asp-controller="Projects" asp-action="MyProjects">My Projects </a>
                             </li>
-
 
                             @*may create a foreach loop to display the most recent projects*@
                         </ul>
@@ -313,9 +315,6 @@
                             <li>
                                 <a asp-controller="Tickets" asp-action="Create"> Create New Ticket  </a>
                             </li>
-
-
-
                         </ul>
                     </li>
                     @if (User.IsInRole("Admin"))
@@ -371,7 +370,7 @@
                         </a>
                     </li>
                     <li class="menu">
-                        <a href="#elements" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <a href="#elements1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                                 <span>Compnay</span>
@@ -380,20 +379,17 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </a>
-                        <ul class="collapse submenu list-unstyled" id="elements" data-parent="#accordionExample">
+                        <ul class="collapse submenu list-unstyled" id="elements1" data-parent="#accordionExample">
                             <li>
                                 <a asp-action="Dashboard" asp-controller="Home"> Company Profile </a>
                             </li>
                             <li>
                                 <a asp-controller="Home" asp-action="CompanyDirectory"> Compnay Directory </a>
                             </li>
-                            
-                           
                         </ul>
                     </li>
-
-
-</nav>
+                </ul>
+            </nav>
         </div>
         <!--  END SIDEBAR  -->
         <!--  BEGIN CONTENT AREA  -->
@@ -430,6 +426,9 @@
     <script src="~/bootstrap/js/bootstrap.min.js"></script>
     <script src="~/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
     <script src="~/assets/js/app.js"></script>
+    <script src="~/plugins/table/datatable/dt-custom-setting.js"></script>
+    <script src="~/plugins/table/datatable/custom_miscellaneous.js"></script>
+    <script src="~/plugins/table/datatable/datatables.js"></script>
     <script>
         $(document).ready(function () {
             App.init();

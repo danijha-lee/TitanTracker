@@ -46,12 +46,16 @@ namespace TitanTracker.Controllers
             foreach (BTUser user in users)
             {
                 ManageUserRolesViewModel viewModel = new();
-                viewModel.BTUser = user;
-                var selectedRoles = await _rolesService.GetUserRolesAsync(user);
+                if (!await _rolesService.IsUserInRoleAsync(user, "Admin"))
+                {
+                    viewModel.BTUser = user;
 
-                viewModel.Roles = new MultiSelectList(await _rolesService.GetRolesAsync(), "Name", "Name", selectedRoles);
+                    var selectedRoles = await _rolesService.GetUserRolesAsync(user);
 
-                model.Add(viewModel);
+                    viewModel.Roles = new MultiSelectList(await _rolesService.GetRolesAsync(), "Name", "Name", selectedRoles);
+
+                    model.Add(viewModel);
+                }
             }
 
             return View(model);
