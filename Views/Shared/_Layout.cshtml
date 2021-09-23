@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using TitanTracker.Models.Enums
+@using Microsoft.AspNetCore.Identity
 @using TitanTracker.Services.Interfaces
 @inject UserManager<BTUser> UserManager
 @inject IBTNotificationService notificationService
@@ -128,7 +129,7 @@
                     <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span class="badge badge-success"></span>
                     </a>
-                  
+
                 </li>
                 <li class="nav-item dropdown user-profile-dropdown">
                     <a class="nav-link dropdown-toggle user" role="button" id="userProfileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -204,7 +205,7 @@
                 <div class="shadow-bottom"></div>
                 <ul class="list-unstyled menu-categories" id="accordionExample">
 
-                    <li class="menu">
+                    <!--<li class="menu">
                         <a href="#dashboard" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-box"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
@@ -218,12 +219,12 @@
 
                             <li>
                                 <a asp-controller="Home" asp-action="Dashboard"> Dashboard </a>
-                            </li>
-                            @*<li>
-                                <a asp-controller="Projects" asp-action="MyProjects">Company Dashboard </a>
-                            </li>*@
-                        </ul>
-                    </li>
+                            </li>-->
+                    @*<li>
+                            <a asp-controller="Projects" asp-action="MyProjects">Company Dashboard </a>
+                        </li>*@
+                    <!--</ul>
+                    </li>-->
 
                     <li class="menu">
                         <a href="#projects" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle" role="button">
@@ -244,6 +245,13 @@
                             <li>
                                 <a asp-controller="Projects" asp-action="Index">All Projects </a>
                             </li>
+
+                            @if (User.IsInRole(Roles.Admin.ToString()) || User.IsInRole(Roles.ProjectManager.ToString()))
+                            {
+                                <li>
+                                    <a asp-controller="Projects" asp-action="Create">Add New Project </a>
+                                </li>
+                            }
 
                             @*may create a foreach loop to display the most recent projects*@
                         </ul>
@@ -290,23 +298,23 @@
                                     <a asp-controller="Tickets" asp-action="Index"> All Tickets </a>
                                 </li>
                                 <li>
-                                    <a asp-controller="Tickets" asp-action="Edit"> Archive A Ticket </a>
+                                    <a asp-controller="Tickets" asp-action="Edit"> Manage Tickets </a>
                                 </li>
                                 <li>
                                     <a asp-controller="Projects" asp-action="Index"> All Projects </a>
                                 </li>
                                 <li>
-                                    <a asp-controller="Projects" asp-action="Create"> Create New Project  </a>
+                                    <a asp-controller="Projects" asp-action="Index"> Manage Projects </a>
                                 </li>
                                 <li>
-                                    <a asp-controller="Projects" asp-action="Index"> Add PM </a>
-                                </li>
-                                <li>
-                                    <a asp-controller="Projects" asp-action="Index"> Archive Project </a>
+                                    <a asp-controller="Projects" asp-action="Create"> Add New Project  </a>
                                 </li>
                                 @*<li>
-                                    <a asp-controller="UserRoles" asp-action="Index"> All Company Users </a>
+                                    <a asp-controller="Projects" asp-action="Index"> Archive Project </a>
                                 </li>*@
+                                @*<li>
+                                        <a asp-controller="UserRoles" asp-action="Index"> All Company Users </a>
+                                    </li>*@
                                 <li>
                                     <a asp-controller="UserRoles" asp-action="ManageUserRoles"> Manage Users  </a>
                                 </li>
@@ -323,24 +331,24 @@
                         </a>
                     </li>
                     @*<li class="menu">
-                        <a href="#elements1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-                                <span>Compnay</span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled" id="elements1" data-parent="#accordionExample">
-                            <li>
-                                <a asp-action="Dashboard" asp-controller="Home"> Company Profile </a>
-                            </li>
-                            <li>
-                                <a asp-controller="Home" asp-action="CompanyDirectory"> Compnay Directory </a>
-                            </li>
-                        </ul>
-                    </li>*@
+                            <a href="#elements1" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                                <div class="">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                                    <span>Compnay</span>
+                                </div>
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                                </div>
+                            </a>
+                            <ul class="collapse submenu list-unstyled" id="elements1" data-parent="#accordionExample">
+                                <li>
+                                    <a asp-action="Dashboard" asp-controller="Home"> Company Profile </a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Home" asp-action="CompanyDirectory"> Compnay Directory </a>
+                                </li>
+                            </ul>
+                        </li>*@
                 </ul>
             </nav>
         </div>
