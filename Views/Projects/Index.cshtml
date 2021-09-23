@@ -3,98 +3,170 @@
 @{
     ViewData["Title"] = "Index";
 }
-<!-- BEGIN PAGE LEVEL CUSTOM STYLES -->
-<link href="assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" type="text/css" href="assets/css/forms/theme-checkbox-radio.css">
-<link href="assets/css/tables/table-basic.css" rel="stylesheet" type="text/css" />
-<!-- END PAGE LEVEL CUSTOM STYLES -->
+<!-- BEGIN PAGE LEVEL STYLES -->
+<link rel="stylesheet" type="text/css" href="~/assets/css/forms/theme-checkbox-radio.css">
+<link href="~/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/css/apps/contacts.css" rel="stylesheet" type="text/css" />
+<!-- END PAGE LEVEL STYLES -->
+<div class="col-lg-12">
+    <div class="widget-content searchable-container list">
 
-<h1>Index</h1>
+        <div class="row mt-3">
+            <div class="col-xl-4 col-lg-5 col-md-5 col-sm-7 filtered-list-search layout-spacing align-self-center">
+                <form class="form-inline my-2 my-lg-0">
+                    <div class="">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="form-control product-search" id="input-search" placeholder="Search Projects...">
+                    </div>
+                </form>
+            </div>
 
-<p>
-    <a asp-action="Create"><button class="btn btn-secondary">Create New</button></a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
+            <div class="col-xl-8 col-lg-7 col-md-7 col-sm-5 text-sm-right text-center layout-spacing align-self-center">
+                <div class="d-flex justify-content-sm-end justify-content-center">
+                    @*<button class="btn btn-success" data-toggle="modal" data-target="#notesMailModal">Add Project</button>*@
+                    <div class="switch align-self-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-list view-list active-view"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid view-grid"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    </div>
+                </div>
 
-            <th>
-                @Html.DisplayNameFor(model => model.Archived)
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.ProjectPriority)
-            </th>
-            <th>
-                ACTION
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate@*.ToString("MM/dd/yyyy")*@)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.Archived)
-            </td>
-
-            <td>
-                <span class="badge badge-success">  @Html.DisplayFor(modelItem => item.ProjectPriority.Name)</span>
-            </td>
-           
-
-
-                <td>
-                    <div class="dropdown custom-dropdown">
-                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <strong>...</strong>  <svg>  </svg>
-                        </a>
-
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink2">
-                            <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                            <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">Details</a>
-                            <a class="dropdown-item" asp-action="AssignMembers" asp-route-id="@item.Id">Assign Members</a>
-                            <a class="dropdown-item" asp-action="AddPM" asp-route-id="@item.Id">Assign Project Manager</a>
+                <!-- Modal -->
+                <!--<div class="modal fade" id="notesMailModal" tabindex="-1" role="dialog" aria-labelledby="notesMailModalTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x close" data-dismiss="modal"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                <div class="notes-box">
+                                    <div class="notes-content">
+                                        <form id="notesMailModalTitle" method="post">
+                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                            <p class="text-center">Fill out the form to add a new ticket</p>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex note-title">
+                                                        <input name="Title" type="text" required class="form-control" maxlength="25" placeholder="Title*">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mt-2">
+                                                    <div class="d-flex note-description">
+                                                        <textarea name="Description" required id="n-description" class="form-control" maxlength="60" placeholder="Description*" rows="3"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mt-2">
+                                                    <div class="d-flex note-title">
+                                                        <select name="ProjectId" type="text" required class="form-control" asp-items="ViewBag.ProjectId" maxlength="25" placeholder="Project*">
+                                                            <option>Project*</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mt-2">
+                                                    <div class="d-flex note-title">
+                                                        <select name="TicketPriorityId" type="text" asp-items="ViewBag.TicketPriorityId" required class="form-control" maxlength="25" placeholder="Priority*">
+                                                            <option>Priority*</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mt-2">
+                                                    <div class="d-flex note-title">
+                                                        <select name="TicketTypeId" type="text" required class="form-control" maxlength="25" asp-items="ViewBag.TicketTypeId" placeholder="Type*">
+                                                            <option>Ticket Type*</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" data-dismiss="modal"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Discard</button>
+                                <a href="javascript:document.getElementById('notesMailModalTitle').submit()" class="btn btn-primary">Create</a>
+                            </div>
                         </div>
                     </div>
-                    @*<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="AssignMembers" asp-route-id="@item.Id">Assign Members</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
-                </td>
-        </tr>
-        }
-    </tbody>
-</table>
-<!-- BEGIN PAGE LEVEL CUSTOM SCRIPTS -->
-<script src="assets/js/scrollspyNav.js"></script>
-<script>
-    checkall('todoAll', 'todochkbox');
-    $('[data-toggle="tooltip"]').tooltip()
-</script>
-<!-- END PAGE LEVEL CUSTOM SCRIPTS -->
+
+
+                </div>-->
+            </div>
+            @*<-------------End Modal---------------->*@
+            @*@if ((await TicketService.GetTicketsByUserIdAsync(user.Id, companyId)).Count() == 0)
+                {
+                    <tr>
+                        <td class="text-center" colspan="5">No Tickets Found.</td>
+                    </tr>
+
+                }
+                else
+                {*@
+            <div class="searchable-items list col-12">
+                <div class="items items-header-section">
+                    <div class="item-content">
+                        <div class="">
+                            <div class="n-chk align-self-center text-center">
+                                <label class="new-control new-checkbox checkbox-primary">
+                                    <input type="checkbox" class="new-control-input" id="contact-check-all">
+                                    <span class="new-control-indicator"></span>
+                                </label>
+                            </div>
+                            <h4>Name</h4>
+                        </div>
+                        <div class="user-email">
+                            <h4>Descroption</h4>
+                        </div>
+                        <div class="user-location">
+                            <h4 style="margin-left: 0;">Start Date</h4>
+                        </div>
+                        <div class="user-phone">
+                            <h4 style="margin-left: 3px;">End Date</h4>
+                        </div>
+                        <div class="action-btn">
+                            <h4>Action</h4>                       
+                        </div>
+                    </div>
+                </div>
+                @foreach (var item in Model)
+                {
+                    <div class="items">
+                        <div class="item-content col-12">
+                            <div class="user-profile">
+
+                                @*<img src="~/assets/img/90x90.jpg" alt="avatar">*@
+                                <div class="user-meta-info">
+                                    <p class="user-name">@Html.DisplayFor(model => item.Name)</p>
+                                    @*<p class="user-work" data-occupation="Web Developer"></p>*@
+                                </div>
+                            </div>
+                            <div class="user-email">
+                                <p class="info-title">Description: </p>
+                                <p class="usr-email-addr text-center">@Html.DisplayFor(model => item.Description)</p>
+                            </div>
+                            <div class="user-location">
+                                <p class="info-title">Start Date: </p>
+                                <p class="usr-location">@item.StartDate.ToString("MM-dd=yyyy"))</p>
+                            </div>
+                            <div class="user-phone">
+                                <p class="info-title">End Date: </p>
+                                <p class="usr-ph-no">@item.EndDate.ToString("MM-dd=yyyy"))</p>
+                            </div>
+                            <div class="action-btn">
+                                <a asp-action="Edit" asp-controller="Projects" asp-route-id="@item.Id"> <svg class="rounded bs-tooltip" title="edit this ticket" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 edit"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a>
+                                <a asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id"><button class="btn btn-dark rounded bs-tooltip" title="Veiw Ticket Detials">Details</button></a>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+
+        </div>
+    </div>
+    @section scripts
+    {
+        <script src="~/plugins/jquery-ui/jquery-ui.min.js"></script>
+        <script src="~/assets/js/apps/contact.js"></script>
+    }
+
+   
+
+   

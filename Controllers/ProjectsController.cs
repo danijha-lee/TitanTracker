@@ -47,7 +47,7 @@ namespace TitanTracker.Controllers
         }
 
         // GET: Projects
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             int companyId = User.Identity.GetCompanyId().Value;

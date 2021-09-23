@@ -5,10 +5,11 @@
 
 @inject IBTProjectService ProjectService
 @inject IBTTicketService TicketService
+@inject UserManager<BTUser> UserManager
 
 @{
     ViewData["Title"] = "Index";
-
+    BTUser user = await UserManager.GetUserAsync(User);
     int companyId = User.Identity.GetCompanyId().Value;
 }
 
@@ -21,10 +22,13 @@
 
     <div class="app-note-container">
 
+
         <div class="app-note-overlay"></div>
+
 
         <div class="tab-title">
             <div class="row">
+
                 <div class="col-md-12 col-sm-12 col-12 text-center">
                     <a id="btn-add-notes" class="btn btn-primary rounded bs-tooltip" title="Add a New Ticket" data-toggle="modal" data-target="#notesMailModal">Add</a>
                 </div>
@@ -59,58 +63,70 @@
                 </div>*@
             </div>
         </div>
+        @if ((await TicketService.GetAllTicketsByCompanyAsync( companyId)).Count() == 0)
+        {
+            <tr>
+                <td class="text-center" colspan="5">No Tickets Found.</td>
+            </tr>
 
-        <div id="ct" class="note-container note-grid">
-            @foreach (var item in Model)
-            {
-                <div class="note-item all-notes note-personal">
-                    <div class="note-inner-content">
-                        <div class="note-content">
-                            <p class="note-title" data-noteTitle="Meeting with Kelly"> @Html.DisplayFor(modelItem => item.Title)</p>
-                            <p class="meta-time"> @Html.DisplayFor(modelItem => item.Created)</p>
-                            <div class="note-description-content">
-                                <p class="note-description" data-noteDescription="Curabitur facilisis vel elit sed dapibus sodales purus rhoncus."> @Html.DisplayFor(modelItem => item.Description)</p>
+        }
+        else
+        {
+
+            <div id="ct" class="note-container note-grid">
+
+                @foreach (var item in Model)
+                {
+                    <div class="note-item all-notes note-personal">
+                        <div class="note-inner-content">
+                            <div class="note-content">
+                                <p class="note-title" data-noteTitle="Meeting with Kelly"> @Html.DisplayFor(modelItem => item.Title)</p>
+                                <p class="meta-time"> @Html.DisplayFor(modelItem => item.Created)</p>
+                                <div class="note-description-content">
+                                    <p class="note-description" data-noteDescription="Curabitur facilisis vel elit sed dapibus sodales purus rhoncus."> @Html.DisplayFor(modelItem => item.Description)</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="note-action">
-                            <svg hidden xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-star fav-note"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                            <svg hidden xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 delete-note"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                        </div>
-                        @*<--------------------INSTERT SWITCH CASE HERE----------------->*@
-                        <div class="note-footer">
-                            <div class="tags-selector btn-group">
-                                <a class="nav-link dropdown-toggle d-icon label-group" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">
-                                    <div class="tags">
-                                        <div class="g-dot-personal"></div>
-                                        <div class="g-dot-work"></div>
-                                        <div class="g-dot-social"></div>
-                                        <div class="g-dot-important"></div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
-                                    </div>
-                                </a>
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <div class="dropdown-menu dropdown-menu-right d-icon-menu">
-                                        <a class="note-personal label-group-item label-personal dropdown-item position-relative g-dot-personal" asp-action="Details" asp-controller="Tickets" asp-route-id="@item.Id"> View Ticket Details</a>
-                                        <a class="note-work label-group-item label-work dropdown-item position-relative g-dot-work" asp-action="Edit" asp-controller="Tickets" asp-route-id="@item.Id"> Edit This Ticket</a>
-                                        @*<a class="note-social label-group-item label-social dropdown-item position-relative g-dot-social" asp-action="Archive" asp-controller="Tickets" asp-route-id="@item.Id"> Archive This Ticket</a>*@
-                                    </div>
-                                } @if (User.IsInRole("Project Manager") || User.IsInRole("Developer") || User.IsInRole("Submitter"))
-                                {
-                                    <div class="dropdown-menu dropdown-menu-right d-icon-menu">
-                                        <a class="note-personal label-group-item label-personal dropdown-item position-relative g-dot-personal" asp-action="Details" asp-controller="Tickets" asp-route-id="@item.Id"> View Ticket Details</a>
-                                        <a class="note-work label-group-item label-work dropdown-item position-relative g-dot-work" asp-action="Edit" asp-controller="Tickets" asp-route-id="@item.Id"> Edit This Ticket</a>
-                                        @*<a class="note-social label-group-item label-social dropdown-item position-relative g-dot-social" asp-action="Archive" asp-controller="Tickets" asp-route-id="@item.Id"> Archive This Ticket</a>*@
-                                    </div>
-                                }
+                            <div class="note-action">
+                                <svg hidden xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-star fav-note"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                <svg hidden xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 delete-note"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </div>
+                            @*<--------------------INSTERT SWITCH CASE HERE----------------->*@
+                            <div class="note-footer">
+                                <div class="tags-selector btn-group">
+                                    <a class="nav-link dropdown-toggle d-icon label-group" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">
+                                        <div class="tags">
+                                            <div class="g-dot-personal"></div>
+                                            <div class="g-dot-work"></div>
+                                            <div class="g-dot-social"></div>
+                                            <div class="g-dot-important"></div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                                        </div>
+                                    </a>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <div class="dropdown-menu dropdown-menu-right d-icon-menu">
+                                            <a class="note-personal label-group-item label-personal dropdown-item position-relative g-dot-personal" asp-action="Details" asp-controller="Tickets" asp-route-id="@item.Id"> View Ticket Details</a>
+                                            <a class="note-work label-group-item label-work dropdown-item position-relative g-dot-work" asp-action="Edit" asp-controller="Tickets" asp-route-id="@item.Id"> Edit This Ticket</a>
+                                            @*<a class="note-social label-group-item label-social dropdown-item position-relative g-dot-social" asp-action="Archive" asp-controller="Tickets" asp-route-id="@item.Id"> Archive This Ticket</a>*@
+                                        </div>
+                                    } @if (User.IsInRole("Project Manager") || User.IsInRole("Developer") || User.IsInRole("Submitter"))
+                {
+                                        <div class="dropdown-menu dropdown-menu-right d-icon-menu">
+                                            <a class="note-personal label-group-item label-personal dropdown-item position-relative g-dot-personal" asp-action="Details" asp-controller="Tickets" asp-route-id="@item.Id"> View Ticket Details</a>
+                                            <a class="note-work label-group-item label-work dropdown-item position-relative g-dot-work" asp-action="Edit" asp-controller="Tickets" asp-route-id="@item.Id"> Edit This Ticket</a>
+                                            @*<a class="note-social label-group-item label-social dropdown-item position-relative g-dot-social" asp-action="Archive" asp-controller="Tickets" asp-route-id="@item.Id"> Archive This Ticket</a>*@
+                                        </div>
+                }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-            }
+                }
+            </div>
+        }
         </div>
-    </div>
+        
 </div>
 
 <!-- Modal -->
@@ -123,6 +139,7 @@
                     <div class="notes-content">
                         <form id="notesMailModalTitle" method="post">
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <p class="text-center">Fill out the form to add a new ticket</p>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="d-flex note-title">
@@ -143,12 +160,16 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="d-flex note-title">
-                                        <select name="TicketPriorityId" type="text" asp-items="ViewBag.TicketPriorityId" required class="form-control" maxlength="25" placeholder="Priority*"></select>
+                                        <select name="TicketPriorityId" type="text" asp-items="ViewBag.TicketPriorityId" required class="form-control" maxlength="25" placeholder="Priority*">
+                                            <option>Priority*</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="d-flex note-title">
-                                        <select name="TicketTypeId" type="text" required class="form-control" maxlength="25" asp-items="ViewBag.TicketTypeId" placeholder="Type*"></select>
+                                        <select name="TicketTypeId" type="text" required class="form-control" maxlength="25" asp-items="ViewBag.TicketTypeId" placeholder="Type*">
+                                            <option>Ticket Type*</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

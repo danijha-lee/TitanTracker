@@ -1,18 +1,15 @@
 ﻿@model TitanTracker.Models.ViewModels.ProjectMembersViewModel
 <div class="container">
-    <h2> Assign Users </h2>
+    <h2 > Assign Users </h2>
 
     <div class="card col-6" style="margin:2px">
-        <div class="col-md-4">
+        <div class="card-body">
             <div class="panel panel-green margin-bottom-40">
                 <div class="panel-heading">
-                    <h3 class="panel-title"> @Model.Project.Name</h3>
+                    <h3 class="panel-title text-center"> @Model.Project.Name</h3>
                 </div>
             </div>
-            <p>
-                Name :
-                <span>@Model.Project.Name</span>
-            </p>
+           
 
             <form asp-action="AssignMembers" asp-controller="Projects" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -20,7 +17,7 @@
                 <input type="hidden" asp-for="@Model.Project.Name">
                 <div class="col-12">
                     <div class="form-group">
-                        <label asp-for="@Model.Users" class="control-label">Assign team members for Project: @Model.Project.Name</label>
+                        <label asp-for="@Model.Users" class="control-label text-center">Assign team members for Project: @Model.Project.Name</label>
                         <select asp-for="@Model.SelectedUsers" class="form-control" asp-items="@Model.Users" multiple="multiple"></select>
                     </div>
                 </div>

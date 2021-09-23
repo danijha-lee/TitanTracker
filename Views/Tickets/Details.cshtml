@@ -20,15 +20,15 @@
     int companyId = User.Identity.GetCompanyId().Value;
 }
 
-BEGIN GLOBAL MANDATORY STYLES
+@*BEGIN GLOBAL MANDATORY STYLES*@
 <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
 <link href="~/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 <link href="~/assets/css/plugins.css" rel="stylesheet" type="text/css" />
-END GLOBAL MANDATORY STYLES
-    BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES
+@*END GLOBAL MANDATORY STYLES
+    BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES*@
 <link href="~/plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" href="~/assets/css/widgets/modules-widgets.css">
-END PAGE LEVEL PLUGINS/CUSTOM STYLES
+@*END PAGE LEVEL PLUGINS/CUSTOM STYLES*@
 
 <div class="layout-px-spacing">
 
@@ -390,7 +390,7 @@ END PAGE LEVEL PLUGINS/CUSTOM STYLES
             </div>
 
             <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-                <div class="widget widget-table-two">
+                <div class="widget widget-table-two col-12">
 
                     <div class="widget-heading">
                         <h5 class="text-center">All Tickets For This Project</h5>

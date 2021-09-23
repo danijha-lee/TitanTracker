@@ -431,140 +431,161 @@
             </div>
         </div>
         @*<--------------------------TABLE FOR USER;S TICKETS -------------------------------------------->*@
-    <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-            <div class="widget widget-table-two">
+        @if ((await TicketService.GetTicketsByUserIdAsync(user.Id, companyId)).Count() == 0)
+        {
+            <tr>
+                <td class="text-center" colspan="5">No Tickets Found.</td>
+            </tr>
 
-                <div class="widget-heading">
-                    <h5 class="text-center">@user.FullName's Tickets</h5>
-                </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+                    <div class="widget widget-table-two">
 
-                <div class="widget-content">
-                    <div class="table-responsive">
-                        <table class="table dt-table-hover" id="ticketTable">
-                            <thead>
-                                <tr>
-                                    <th><div class="th-content">Title</div></th>
-                                    <th><div class="th-content">Priority</div></th>
-                                    <th><div class="th-content">Project</div></th>
-                                    <th><div class="th-content th-heading">Type</div></th>
-                                    <th><div class="th-content">Status</div></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (Ticket ticket in await TicketService.GetTicketsByUserIdAsync(user.Id, companyId))
-                                {
+                        <div class="widget-heading">
+                            <h5 class="text-center">@user.FullName's Tickets</h5>
+                        </div>
 
-                                    <tr>
+                        <div class="widget-content">
+                            <div class="table-responsive">
+                                <table class="table dt-table-hover" id="ticketTable">
+                                    <thead>
+                                        <tr>
+                                            <th><div class="th-content">Title</div></th>
+                                            <th><div class="th-content">Priority</div></th>
+                                            <th><div class="th-content">Project</div></th>
+                                            <th><div class="th-content th-heading">Type</div></th>
+                                            <th><div class="th-content">Status</div></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (Ticket ticket in await TicketService.GetTicketsByUserIdAsync(user.Id, companyId))
+                                        {
 
-                                        <td> <a class=" rounded bs-tooltip" title="View This Ticket" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><div class="td-content customer-name">@*<img src="~/assets/img/90x90.jpg" alt="avatar">*@<span></span></div>@Html.DisplayFor(modelItem => ticket.Title)</a></td>
-                                        <td><div class="td-content product-brand text-primary">@Html.DisplayFor(modelItem => ticket.TicketPriority.Name)</div></td>
-                                        <td><div class="td-content product-invoice"></div>@Html.DisplayFor(modelItem => ticket.Project.Name)</td>
-                                        <td><div class="td-content pricing"><span class=""></span></div>@Html.DisplayFor(modelItem => ticket.TicketType.Name)</td>
-                                        <td><div class="td-content"><span class="badge badge-success"></span></div>@Html.DisplayFor(modelItem => ticket.TicketStatus.Name)</td>
-                                    </tr>
-                                }
+                                            <tr>
 
-                                @if ((await TicketService.GetTicketsByUserIdAsync(user.Id, companyId)).Count == 0)
-                                {
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td>
-                                            No Tickets yet.
-                                        </td>
-                                    </tr>
+                                                <td> <a class=" rounded bs-tooltip" title="View This Ticket" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><div class="td-content customer-name">@*<img src="~/assets/img/90x90.jpg" alt="avatar">*@<span></span></div>@Html.DisplayFor(modelItem => ticket.Title)</a></td>
+                                                <td><div class="td-content product-brand text-primary">@Html.DisplayFor(modelItem => ticket.TicketPriority.Name)</div></td>
+                                                <td><div class="td-content product-invoice"></div>@Html.DisplayFor(modelItem => ticket.Project.Name)</td>
+                                                <td><div class="td-content pricing"><span class=""></span></div>@Html.DisplayFor(modelItem => ticket.TicketType.Name)</td>
+                                                <td><div class="td-content"><span class="badge badge-success"></span></div>@Html.DisplayFor(modelItem => ticket.TicketStatus.Name)</td>
+                                            </tr>
+                                        }
 
-                                }
+                                        @if ((await TicketService.GetTicketsByUserIdAsync(user.Id, companyId)).Count == 0)
+                                        {
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td>
+                                                    No Tickets yet.
+                                                </td>
+                                            </tr>
 
-                            </tbody>
-                        </table>
+                                        }
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        }
 
-        @*-----------------------------------------START PROJECT'S TABLE HERE-------------------------------------------->*@
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-            <div class="widget widget-table-three">
+            @*-----------------------------------------START PROJECT'S TABLE HERE-------------------------------------------->*@
+            @if ((await ProjectService.GetUserProjectsAsync(user.Id)).Count() == 0)
+            {
+                <tr>
+                    <td class="text-center" colspan="5">No Projects Found.</td>
+                </tr>
 
-                <div class="widget-heading">
-                    <h5 class="text-center">@user.FullName's Projects</h5>
-                </div>
+            }
+            else
+            {
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+                    <div class="widget widget-table-three">
 
-                <div class="widget-content">
-                    <div class="table-responsive">
-                        <table class="table dt-table-hover" id="projectTable">
-                            <thead>
-                                <tr>
-                                    <th><div class="th-content">Name</div></th>
-                                    <th><div class="th-content th-heading">Start Date</div></th>
-                                    <th><div class="th-content th-heading">End Date</div></th>
-                                    @*<th><div class="th-content"></div></th>*@
-                                    <th><div class="th-content"></div></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td><div class="td-content product-name"><img src="~/assets/img/90x90.jpg" alt="product"><div class="align-self-center"><a asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id"><p class="prd-name">@Html.DisplayFor(modelItem => item.Name)</p></a><p class="prd-category text-primary">@Html.DisplayFor(modelItem => item.ProjectPriority.Name)</p></div></div></td>
-                                        <td><div class="td-content"><span class="pricing">@item.StartDate.ToString("MM/dd/yyyy")</span></div></td>
-                                        <td><div class="td-content"><span class="discount-pricing">@item.EndDate.ToString("MM/dd/yyyy")</span></div></td>
-                                        @*<td><div class="td-content">170</div></td>*@
-                                        <td><div class="td-content"><a class=" rounded bs-tooltip" title="View This Project" asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id" class="text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg> View</a></div></td>
-                                    </tr>
-                                }
+                        <div class="widget-heading">
+                            <h5 class="text-center">@user.FullName's Projects</h5>
+                        </div>
 
-                                @*<div class="paginating-container pagination-default">
-                                    <ul class="pagination">
-                                        <li class="prev"><a href="javascript:void(0);">Prev</a></li>
-                                        <li><a href="javascript:void(0);">1</a></li>
-                                        <li class="active"><a href="javascript:void(0);">2</a></li>
-                                        <li><a href="javascript:void(0);">3</a></li>
-                                        <li class="next"><a href="javascript:void(0);">Next</a></li>
-                                    </ul>
-                                </div>*@
-                            </tbody>
-                        </table>
+                        <div class="widget-content">
+                            <div class="table-responsive">
+                                <table class="table dt-table-hover" id="projectTable">
+                                    <thead>
+                                        <tr>
+                                            <th><div class="th-content">Name</div></th>
+                                            <th><div class="th-content th-heading">Start Date</div></th>
+                                            <th><div class="th-content th-heading">End Date</div></th>
+                                            @*<th><div class="th-content"></div></th>*@
+                                            <th><div class="th-content"></div></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td><div class="td-content product-name"><img src="~/assets/img/90x90.jpg" alt="product"><div class="align-self-center"><a asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id"><p class="prd-name">@Html.DisplayFor(modelItem => item.Name)</p></a><p class="prd-category text-primary">@Html.DisplayFor(modelItem => item.ProjectPriority.Name)</p></div></div></td>
+                                                <td><div class="td-content"><span class="pricing">@item.StartDate.ToString("MM/dd/yyyy")</span></div></td>
+                                                <td><div class="td-content"><span class="discount-pricing">@item.EndDate.ToString("MM/dd/yyyy")</span></div></td>
+                                                @*<td><div class="td-content">170</div></td>*@
+                                                <td><div class="td-content"><a class=" rounded bs-tooltip" title="View This Project" asp-action="Details" asp-controller="Projects" asp-route-id="@item.Id" class="text-danger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-right"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg> View</a></div></td>
+                                            </tr>
+                                        }
+
+                                        @*<div class="paginating-container pagination-default">
+                                            <ul class="pagination">
+                                                <li class="prev"><a href="javascript:void(0);">Prev</a></li>
+                                                <li><a href="javascript:void(0);">1</a></li>
+                                                <li class="active"><a href="javascript:void(0);">2</a></li>
+                                                <li><a href="javascript:void(0);">3</a></li>
+                                                <li class="next"><a href="javascript:void(0);">Next</a></li>
+                                            </ul>
+                                        </div>*@
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        @*</div>*@
-        @*</div>
-        </div>*@
-        <!--  END CONTENT AREA  -->
-        @*</div>*@
-        <!-- END MAIN CONTAINER -->
-        <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-        <script src="~/assets/js/libs/jquery-3.1.1.min.js"></script>
-        <script src="~/bootstrap/js/popper.min.js"></script>
-        <script src="~/bootstrap/js/bootstrap.min.js"></script>
-        <script src="~/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-        <script src="~/assets/js/app.js"></script>
+            }
+            @*</div>*@
+            @*</div>
+            </div>*@
+            <!--  END CONTENT AREA  -->
+            @*</div>*@
+            <!-- END MAIN CONTAINER -->
+            <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+            <script src="~/assets/js/libs/jquery-3.1.1.min.js"></script>
+            <script src="~/bootstrap/js/popper.min.js"></script>
+            <script src="~/bootstrap/js/bootstrap.min.js"></script>
+            <script src="~/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+            <script src="~/assets/js/app.js"></script>
 
-        <script>
-            $(document).ready(function () {
-                App.init();
-            });
-        </script>
-        <script>
-            $(document).ready(function () {
-                $('#ticketTable').DataTable();
-            });
-        </script>
-        <script>
-            $(document).ready(function () {
-                $('#projectTable').DataTable();
-            });
-        </script>
-        <script src="~/assets/js/custom.js"></script>
-        <!-- END GLOBAL MANDATORY SCRIPTS -->
-        <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
-        <script src="~/plugins/apex/apexcharts.min.js"></script>
-        <script src="~/assets/js/widgets/modules-widgets.js"></script>
-        <script src="~/assets/js/scrollspyNav.js"></script>
-        <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+            <script>
+                $(document).ready(function () {
+                    App.init();
+                });
+            </script>
+            <script>
+                $(document).ready(function () {
+                    $('#ticketTable').DataTable();
+                });
+            </script>
+            <script>
+                $(document).ready(function () {
+                    $('#projectTable').DataTable();
+                });
+            </script>
+            <script src="~/assets/js/custom.js"></script>
+            <!-- END GLOBAL MANDATORY SCRIPTS -->
+            <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+            <script src="~/plugins/apex/apexcharts.min.js"></script>
+            <script src="~/assets/js/widgets/modules-widgets.js"></script>
+            <script src="~/assets/js/scrollspyNav.js"></script>
+            <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
 </body>
