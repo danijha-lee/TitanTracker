@@ -72,7 +72,7 @@
 
     <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
     <!--  BEGIN MAIN CONTAINER  -->
-    <div class="main-container mt-3" id="container">
+    @*<div class="main-container mt-3" id="container">*@
 
         <!--  BEGIN CONTENT AREA  -->
         @*<div id="content" class="main-content">*@
@@ -433,9 +433,9 @@
         @*<--------------------------TABLE FOR USER;S TICKETS -------------------------------------------->*@
         @if ((await TicketService.GetTicketsByUserIdAsync(user.Id, companyId)).Count() == 0)
         {
-            <tr>
-                <td class="text-center" colspan="5">No Tickets Found.</td>
-            </tr>
+            <div class="row">
+                <span class="text-center" colspan="5">No Tickets Found.</span>
+            </div>
 
         }
         else

@@ -252,7 +252,9 @@
                                     <a asp-controller="Projects" asp-action="Create">Add New Project </a>
                                 </li>
                             }
-
+                            <li>
+                                <a asp-controller="Projects" asp-action="Index">Assign Project Managers< </a>
+                            </li>
                             @*may create a foreach loop to display the most recent projects*@
                         </ul>
                     </li>
@@ -310,8 +312,8 @@
                                     <a asp-controller="Projects" asp-action="Create"> Add New Project  </a>
                                 </li>
                                 @*<li>
-                                    <a asp-controller="Projects" asp-action="Index"> Archive Project </a>
-                                </li>*@
+                                        <a asp-controller="Projects" asp-action="Index"> Archive Project </a>
+                                    </li>*@
                                 @*<li>
                                         <a asp-controller="UserRoles" asp-action="Index"> All Company Users </a>
                                     </li>*@
@@ -379,25 +381,25 @@
                         <button type="button" class="btn btn-primary">Save</button>
                     </div>
                 </div>
-            </div>
-        </div>-->
-        <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
-        <script src="~/assets/js/libs/jquery-3.1.1.min.js"></script>
-        <script src="~/bootstrap/js/popper.min.js"></script>
-        <script src="~/bootstrap/js/bootstrap.min.js"></script>
-        <script src="~/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-        <script src="~/assets/js/app.js"></script>
-        <script src="~/plugins/table/datatable/dt-custom-setting.js"></script>
-        <script src="~/plugins/table/datatable/custom_miscellaneous.js"></script>
-        <script src="~/plugins/table/datatable/datatables.js"></script>
-        <script>
-            $(document).ready(function () {
-                App.init();
-            });
-        </script>
-        <!--  BEGIN CUSTOM SCRIPT FILE  -->
-        @*<script src="~/assets/js/scrollspyNav.js"></script>*@
-        <script>
+            </div>-->
+    </div>
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script src="~/assets/js/libs/jquery-3.1.1.min.js"></script>
+    <script src="~/bootstrap/js/popper.min.js"></script>
+    <script src="~/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/plugins/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/plugins/table/datatable/dt-custom-setting.js"></script>
+    <script src="~/plugins/table/datatable/custom_miscellaneous.js"></script>
+    <script src="~/plugins/table/datatable/datatables.js"></script>
+    <script>
+        $(document).ready(function () {
+            App.init();
+        });
+    </script>
+    <!--  BEGIN CUSTOM SCRIPT FILE  -->
+    @*<script src="~/assets/js/scrollspyNav.js"></script>*@
+    @*<script>
             $('#yt-video-link').click(function () {
                 var src = 'https://www.youtube.com/embed/YE7VzlLtp-4';
                 $('#videoMedia1').modal('show');
@@ -421,26 +423,26 @@
             $('#videoMedia1 button, #videoMedia2 button').click(function () {
                 $('#videoMedia1 iframe, #videoMedia2 iframe').removeAttr('src');
             });
-        </script>
-        <!--  END CUSTOM SCRIPT FILE  -->
-        <script src="~/assets/js/custom.js"></script>
-        <!-- END GLOBAL MANDATORY SCRIPTS -->
-        <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
-        <script src="~/plugins/apex/apexcharts.min.js"></script>
-        <script src="~/assets/js/dashboard/dash_1.js"></script>
-        <!-- BEGIN PAGE LEVEL SCRIPTS -->
-        <script src="~/assets/js/scrollspyNav.js"></script>
-        <script src="~/plugins/tagInput/tags-input.js"></script>
-        <!-- END PAGE LEVEL SCRIPTS -->
+        </script>*@
+    <!--  END CUSTOM SCRIPT FILE  -->
+    <script src="~/assets/js/custom.js"></script>
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+    <script src="~/plugins/apex/apexcharts.min.js"></script>
+    <script src="~/assets/js/dashboard/dash_1.js"></script>
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="~/assets/js/scrollspyNav.js"></script>
+    <script src="~/plugins/tagInput/tags-input.js"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
 
-        <script>
-            var instance = new TagsInput({
-                selector: 'skill-input'
-            });
-            instance.addData(['PHP', 'Wordpress', 'Javascript', 'jQuery'])
-        </script>
+    <script>
+        var instance = new TagsInput({
+            selector: 'skill-input'
+        });
+        instance.addData(['PHP', 'Wordpress', 'Javascript', 'jQuery'])
+    </script>
 
-        <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
-        @RenderSection("scripts", required: false)
+    <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
+    @RenderSection("scripts", required: false)
 </body>
 </html>
